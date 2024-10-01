@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pizza Teigrechner</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍕</text></svg>">
+</head>
+<body onload="init()" >
+
+<div id="pizza-container"></div>
+
+<div class="container-md my-5">
+  <h1>Pizza Teigrechner</h1>
+  <table class="col-sm-8 col-sm-4 px-0 my-2">
+    <tr>
+      <td>
+        <label for="pizza-diameter" class="form-label">Durchmesser der Pizza (cm)</label>
+      </td>
+      <td>
+        <input type="number" min="10" max="100" id="pizza-diameter" class="form-control">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="pizza-amount" class="form-label">Anzahl der Pizzen</label>
+      </td>
+      <td>
+        <input type="number" min="1" max="100" id="pizza-amount" class="form-control">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="flour" class="form-label">Mehl Typo 00 (g)</label>
+      </td>
+      <td>
+        <input id="flour" class="form-control" readonly>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="water" class="form-label">Wasser (ml)</label>
+      </td>
+      <td>
+        <input id="water" class="form-control" readonly>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="yeast" class="form-label">Hefe (g)</label>
+      </td>
+      <td>
+        <input id="yeast" class="form-control" readonly>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="salt" class="form-label">Salz (g)</label>
+      </td>
+      <td>
+        <input id="salt" class="form-control" readonly>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="oil" class="form-label">Olivenöl (EL)</label>
+      </td>
+      <td>
+        <input id="oil" class="form-control" readonly>
+      </td>
+    </tr>
+  </table>
+
+  <div class="my-2">
+    <h5>Tipps:</h5>
+    <ul>
+      <li>Ein Hefewürfel hat 42g</li>
+      <li>Ein gehäufter TL Salz hat 6g</li>
+      <li>Den Teig kann man über dem Backofen gehen lassen, wenn dieser vorwärmt</li>
+      <li><span id="beer"></span> kaltstellen nicht vergessen</li>
+    </ul>
+  </div>
+
+  <div class="my-2">
+    <h5>Zubereitung:</h5>
+  <p>
+    Die Hefe und eine Prise Zucker in Wasser auflösen und 5min gehen lassen. Das Mehl in eine Schüssel geben und eine Kuhle in die Mitte drücken. Nun das Öl in die Kuhle gießen und das Salz dazu geben. Anschließend das Hefe-Wasser-Gemisch dazugeben.
+    Jetzt muss alles gut durch von Hand geknetet werden. Am besten beginnt man mit den Fingern das Salz aufzulösen und schrittweise das Mehl in die Flüssigkeit zu rühren.
+    Am Ende eine Stunde gehen lassen und vor dem Backen am besten schon in <span id="dough"></span> schwere Teiglinge formen. Bei max Temperatur ca. 7min backen.
+  </p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="./main.js"></script>
+</body>
+</html>
+
+<style>
+  .pizza {
+    position: fixed;
+    top: -100px; /* Start above the screen */
+    animation: fall linear infinite;
+    user-select: none; /* Disable text selection */
+  }
+
+  #pizza-container {
+    z-index: 1;
+  }
+
+  /* Keyframes to animate the falling pizzas */
+  @keyframes fall {
+    0% {
+      transform: translateY(-100px) rotate(0deg);
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  body {
+    position: relative;
+    z-index: 10;
+  }
+</style>
