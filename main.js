@@ -182,9 +182,7 @@ function createPizzaSlice() {
   document.getElementById('pizza-container').appendChild(pizza);
 
   // Remove the pizza after the animation is complete
-  pizza.addEventListener('animationend', () => {
-    pizza.remove()
-  });
+  pizza.addEventListener('animationend', () => pizza.remove());
 
   // Add click event listener for explosion
   pizza.addEventListener('click', (e) => explodePizza(pizza, e.pageX, e.pageY));
