@@ -11,6 +11,11 @@ const BEERS = ["Wulle", "Franziskaner", "Guiness", "Krombacher",
   "Stuttgarter Herrenpils", "Störtebecker", "Farny", "Spaten Bier",
   "Chiemseer Helles", "Benediktiner", "Freiberger"];
 
+const COLOR_MODES = Object.freeze({
+  LIGHT: "light",
+  DARK: "dark",
+});
+
 function init() {
   // Set default values for input fields
   document.getElementById('pizza-diameter').value = 28;
@@ -33,6 +38,10 @@ function init() {
 
   // Set random beer name
   document.getElementById('beer').textContent = getRandomBeer();
+
+  if(localStorage['colorMode'] == COLOR_MODES.DARK){
+    toggleColorScheme();
+  }
 }
 
 /**
@@ -176,5 +185,9 @@ function explodePizza(pizza, x, y) {
  * Switches between light and dark mode color scheme
  */
 function toggleColorScheme() {
-  document.body.classList.toggle("dark-mode");
+  var bodyClassList = document.body.classList;
+  bodyClassList.toggle("dark-mode");
+
+  bodyClassList.contains("dark-mode") ? 
+  localStorage['colorMode'] = COLOR_MODES.DARK : localStorage['colorMode'] = COLOR_MODES.LIGHT;
 }
