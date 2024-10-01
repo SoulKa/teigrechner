@@ -4,11 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pizza Teigrechner</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous">
   <link rel="stylesheet" href="./styles.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍕</text></svg>">
+  <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍕</text></svg>">
 </head>
-<body onload="init()" >
+<body onload="init()">
 
 <div id="pizza-container"></div>
 
@@ -85,15 +89,21 @@
 
   <div class="my-2">
     <h5>Zubereitung:</h5>
-  <p>
-    Die Hefe und eine Prise Zucker in Wasser auflösen und 5min gehen lassen. Das Mehl in eine Schüssel geben und eine Kuhle in die Mitte drücken. Nun das Öl in die Kuhle gießen und das Salz dazu geben. Anschließend das Hefe-Wasser-Gemisch dazugeben.
-    Jetzt muss alles gut durch von Hand geknetet werden. Am besten beginnt man mit den Fingern das Salz aufzulösen und schrittweise das Mehl in die Flüssigkeit zu rühren.
-    Am Ende eine Stunde gehen lassen und vor dem Backen am besten schon in <span id="dough"></span> schwere Teiglinge formen. Bei max Temperatur ca. 7min backen.
-  </p>
+    <p>
+      Die Hefe und eine Prise Zucker in Wasser auflösen und 5min gehen lassen. Das Mehl in eine
+      Schüssel geben und eine Kuhle in die Mitte drücken. Nun das Öl in die Kuhle gießen und das
+      Salz dazu geben. Anschließend das Hefe-Wasser-Gemisch dazugeben.
+      Jetzt muss alles gut durch von Hand geknetet werden. Am besten beginnt man mit den Fingern das
+      Salz aufzulösen und schrittweise das Mehl in die Flüssigkeit zu rühren.
+      Am Ende eine Stunde gehen lassen und vor dem Backen am besten schon in <span
+        id="dough"></span> schwere Teiglinge formen. Bei max Temperatur ca. 7min backen.
+    </p>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
 <script src="./main.js"></script>
 </body>
 </html>
@@ -104,10 +114,17 @@
     top: -100px; /* Start above the screen */
     animation: fall linear infinite;
     user-select: none; /* Disable text selection */
+    transition: 1.5s cubic-bezier(.17, .67, 0, 1.34); /* Smooth explosion */
   }
 
   #pizza-container {
     z-index: 1;
+  }
+
+  .explode {
+    transform: scale(2); /* Scale the pizza up to simulate explosion */
+    opacity: 0; /* Fade the pizza out */
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out; /* Smooth transition */
   }
 
   /* Keyframes to animate the falling pizzas */
@@ -125,9 +142,38 @@
     }
   }
 
+  * {
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='48' viewport='0 0 100 100' style='fill:black;font-size:24px;'><text y='50%'>🍺</text></svg>") 16 0, auto;
+  }
+
   body {
     position: relative;
     z-index: 10;
-    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='48' viewport='0 0 100 100' style='fill:black;font-size:24px;'><text y='50%'>🍺</text></svg>") 16 0, auto;
+  }
+
+  .explosion {
+    position: absolute;
+    width: 75%;
+    height: 75%;
+    pointer-events: none;
+
+    .particle {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 25%;
+      animation: pop 1s reverse forwards;
+    }
+  }
+
+  @keyframes pop {
+    from {
+      opacity: 0;
+    }
+    to {
+      top: 50%;
+      left: 50%;
+      opacity: 1;
+    }
   }
 </style>

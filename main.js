@@ -7,7 +7,9 @@ const baseOil = 1; // TS of oil
 const baseArea = Math.PI * Math.pow(28 / 2, 2); // area of a 28 cm pizza
 const baseDough = 180; // grams of dough for a 28 cm pizza
 
-const BEERS = ["Wulle", "Franziskaner", "Guiness", "Krombacher", "Stuttgarter Herrenpils", "Störtebecker", "Farny", "Spaten Bier", "Chiemseer Helles", "Benediktiner", "Freiberger"];
+const BEERS = ["Wulle", "Franziskaner", "Guiness", "Krombacher",
+  "Stuttgarter Herrenpils", "Störtebecker", "Farny", "Spaten Bier",
+  "Chiemseer Helles", "Benediktiner", "Freiberger"];
 
 function init() {
   // Set default values for input fields
@@ -18,11 +20,13 @@ function init() {
   document.getElementById('yeast').value = baseYeast;
   document.getElementById('salt').value = baseSalt;
   document.getElementById('oil').value = baseOil;
-  document.getElementById('dough').textContent = baseDough+"g";
+  document.getElementById('dough').textContent = baseDough + "g";
 
   // Add event listeners to input fields
-  document.getElementById('pizza-diameter').addEventListener('input', calculateIngredients);
-  document.getElementById('pizza-amount').addEventListener('input', calculateIngredients);
+  document.getElementById('pizza-diameter').addEventListener('input',
+      calculateIngredients);
+  document.getElementById('pizza-amount').addEventListener('input',
+      calculateIngredients);
 
   // Calculate initial ingredient amounts
   calculateIngredients();
@@ -69,15 +73,16 @@ function calculateIngredients() {
   document.getElementById('yeast').value = Math.round(baseYeast * scaleFactor);
   document.getElementById('salt').value = (baseSalt * scaleFactor).toFixed(1);
   document.getElementById('oil').value = (baseOil * scaleFactor).toFixed(1);
-  document.getElementById('dough').textContent = Math.round(baseDough * currentArea / baseArea)+"g";
+  document.getElementById('dough').textContent = Math.round(
+      baseDough * currentArea / baseArea) + "g";
 
   setNumberOfSlices(amount);
 }
 
 /**
  * Function to get a random number between a range
- * @param min the minimum number
- * @param max the maximum number
+ * @param {number} min the minimum number
+ * @param {number} max the maximum number
  */
 function getRandom(min, max) {
   return Math.random() * (max - min) + min;
@@ -114,4 +119,55 @@ function createPizzaSlice() {
 
   // Remove the pizza after the animation is complete
   pizza.addEventListener('animationend', () => pizza.remove());
+
+  // Add click event listener for explosion
+  pizza.addEventListener('click', (e) => explodePizza(pizza, e.pageX, e.pageY));
+}
+
+/**
+ * @param x {number} X position
+ * @param y {number} Y position
+ */
+function explode(x, y) {
+  const particles = 150;
+  const explosion = document.createElement('div');
+  explosion.classList.add('explosion');
+
+  // put the explosion container into the body to be able to get it's size
+  document.querySelector('body').append(explosion);
+
+  // position the container to be centered on click
+  explosion.style.left = (x - explosion.offsetWidth / 2) + "px";
+  explosion.style.top = (y - explosion.offsetHeight / 2) + "px";
+
+  for (let i = 0; i < particles; i++) {
+    // positioning x,y of the particle on the circle (little randomized radius)
+    const x = (explosion.offsetWidth / 2) + getRandom(80, 150) * Math.cos(
+        2 * Math.PI * i / getRandom(particles - 10, particles + 10));
+    const y = (explosion.offsetHeight / 2) + getRandom(80, 150) * Math.sin(
+        2 * Math.PI * i / getRandom(particles - 10, particles + 10));
+
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+    particle.style.backgroundColor = `rgb(${getRandom(0, 255)},0,0)`;
+    particle.style.top = y + 'px';
+    particle.style.left = x + 'px';
+
+    if (i === 0) {
+      particle.onanimationend = () => explosion.remove();
+    }
+    explosion.append(particle);
+  }
+}
+
+/**
+ * Explodes a pizza slice
+ * @param {HTMLDivElement} pizza The pizza slice element
+ * @param {number} x The x position of the explosion
+ * @param {number} y The y position of the explosion
+ */
+function explodePizza(pizza, x, y) {
+  pizza.remove();
+  createPizzaSlice();
+  explode(x, y);
 }
