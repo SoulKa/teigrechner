@@ -171,3 +171,10 @@ function explodePizza(pizza, x, y) {
   createPizzaSlice();
   explode(x, y);
 }
+
+/**
+ * Switches between light and dark mode color scheme
+ */
+function toggleColorScheme() {
+  document.body.classList.toggle("dark-mode");
+}
