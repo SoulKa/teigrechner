@@ -7,6 +7,33 @@ const baseOil = 1; // TS of oil
 const baseArea = Math.PI * Math.pow(28 / 2, 2); // area of a 28 cm pizza
 const baseDough = 180; // grams of dough for a 28 cm pizza
 
+const sliceStateModule = {
+  _active: true,
+  enable: function() {
+    this._active = true;
+    const amount = document.getElementById('pizza-amount').value;
+    const pizzaContainer = document.getElementById('pizza-container');
+    for (const pizza of pizzaContainer.children) {
+      pizza.classList.remove("pizza--disabled")
+    }
+    setNumberOfSlices(amount);
+  },
+  disable: function() {
+    this._active = false;
+    const pizzaContainer = document.getElementById('pizza-container');
+    for (const pizza of pizzaContainer.children) {
+      pizza.classList.add("pizza--disabled")
+    }
+  },
+  toggle: function(){
+    if(this._active) this.disable()
+    else this.enable()
+  },
+  isActive: function(){
+    return this._active;
+  }
+}
+
 const BEERS = ["Wulle", "Franziskaner", "Guiness", "Krombacher",
   "Stuttgarter Herrenpils", "Störtebecker", "Farny", "Spaten Bier",
   "Chiemseer Helles", "Benediktiner", "Freiberger"];
@@ -39,6 +66,12 @@ function init() {
   // Set random beer name
   document.getElementById('beer').textContent = getRandomBeer();
 
+  //add event listener to slice rain toggle button
+  document.getElementById('toggle-rain-button').addEventListener('click', (e)=> {
+    e.currentTarget.classList.toggle("active");
+    sliceStateModule.toggle();
+  })
+
   if (localStorage['colorMode'] === COLOR_MODES.DARK) {
     toggleColorScheme();
   }
@@ -49,6 +82,7 @@ function init() {
  * @param {number} numPizza The number of full pizza
  */
 function setNumberOfSlices(numPizza) {
+  if (!sliceStateModule.isActive()) return;
   const numSlices = Math.min(250, Math.round(numPizza * 8));
   const pizzaContainer = document.getElementById('pizza-container');
 
@@ -127,7 +161,9 @@ function createPizzaSlice() {
   document.getElementById('pizza-container').appendChild(pizza);
 
   // Remove the pizza after the animation is complete
-  pizza.addEventListener('animationend', () => pizza.remove());
+  pizza.addEventListener('animationend', () => {
+    pizza.remove()
+  });
 
   // Add click event listener for explosion
   pizza.addEventListener('click', (e) => explodePizza(pizza, e.pageX, e.pageY));
