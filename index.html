@@ -19,6 +19,12 @@
 <div id="pizza-container"></div>
 
 <div class="container-md my-5">
+  <div class="header-container">
+    <div id="toggle-rain-button" class="toggle-rain-button">
+      <span class="toggle-rain-button-label--disable">Pizzaregen&nbsp;stoppen</span>
+      <span class="toggle-rain-button-label--enable">Pizzaregen&nbsp;starten</span>
+    </div>
+  </div>
   <h1>Pizza Teigrechner</h1>
   <button title="Toggle Light / Dark Mode" onclick="toggleColorScheme()" class="pizza-button">
     <img id="pizza-image" src="./images/pizza_toggle_color_scheme.png"
@@ -138,6 +144,11 @@
     transition: 1.5s cubic-bezier(.17, .67, 0, 1.34); /* Smooth explosion */
   }
 
+  .pizza--disabled {
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+  }
+
   #pizza-container {
     z-index: 1;
   }
@@ -217,5 +228,30 @@
       left: 50%;
       opacity: 1;
     }
+  }
+
+  .header-container {
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: end;
+  }
+  .toggle-rain-button {
+    color: #000;
+    flex: 0 0 min-content;
+    font-size: 60%;
+    border-bottom: 1px solid #000;
+  }
+  .toggle-rain-button {
+    display: block;
+  }
+  .toggle-rain-button-label--enable {
+    display: none;
+  }
+  .toggle-rain-button.active .toggle-rain-button-label--disable {
+    display: none;
+  }
+  .toggle-rain-button.active .toggle-rain-button-label--enable {
+    display: block;
   }
 </style>
