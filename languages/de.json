@@ -1,0 +1,14 @@
+{
+  "header_text": "Pizza Teigrechner",
+  "pizza_rain_stop": "Pizzaregen stoppen",
+  "pizza_rain_start": "Pizzaregen starten",
+  "pizza_diameter": "Durchmesser der Pizza (cm)",
+  "pizza_amount": "Anzahl der Pizzen",
+  "flour": "Mehl Tipo 00 (g)",
+  "water": "Wasser (ml)",
+  "yeast": "Hefe (g)",
+  "salt": "Salz (g)",
+  "olive_oil": "Olivenöl (EL)",
+  "header_hints": "Tipps:",
+  "header_instructions": "Zubereitung:"
+}

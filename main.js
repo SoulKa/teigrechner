@@ -69,10 +69,11 @@ function init() {
   setTheme(getPreferredTheme())
 
   //add event listener to slice rain toggle button
-  document.getElementById('toggle-rain-button').addEventListener('click', (e)=> {
-    e.currentTarget.classList.toggle("active");
-    slicerDicer.toggle();
-  })
+  document.getElementById('toggle-rain-button').addEventListener('click',
+      (e) => {
+        e.currentTarget.classList.toggle("active");
+        slicerDicer.toggle();
+      })
 
   if (localStorage['colorMode'] === COLOR_MODES.DARK) {
     toggleColorScheme();
@@ -84,7 +85,9 @@ function init() {
  * @param {number} numPizza The number of full pizza
  */
 function setNumberOfSlices(numPizza) {
-  if (!slicerDicer.isActive()) return;
+  if (!slicerDicer.isActive()) {
+    return;
+  }
   const numSlices = Math.min(250, Math.round(numPizza * 8));
   const pizzaContainer = document.getElementById('pizza-container');
 
@@ -233,6 +236,29 @@ function changeInputValue(id, delta) {
   calculateIngredients();
 }
 
+async function changeLanguage(language) {
+  await setLanguagePreference(language);
+
+  const languageData = await fetchLanguageData(language);
+  updateContent(languageData);
+}
+
+function setLanguagePreference(language) {
+  localStorage.setItem('language', language);
+  //location.reload();
+}
+
+async function fetchLanguageData(lang) {
+  const response = await fetch(`languages/${lang}.json`);
+  return response.json();
+}
+
+function updateContent(languageData) {
+  document.querySelectorAll('[data-i18n]').forEach(element => {
+    const attributeValue = element.getAttribute('data-i18n');
+    element.textContent = languageData[attributeValue];
+  });
+}
 
 class SliceStateModule {
   _active = false;
@@ -246,13 +272,19 @@ class SliceStateModule {
 
   enable() {
     this._active = true;
-    for (const pizza of this.pizzaContainer.children) pizza.classList.remove(this._classNameDisabled);
+    for (const pizza of this.pizzaContainer.children) {
+      pizza.classList.remove(
+          this._classNameDisabled);
+    }
     setNumberOfSlices(this.amountInput.value);
   }
 
   disable() {
     this._active = false;
-    for (const pizza of this.pizzaContainer.children) pizza.classList.add(this._classNameDisabled)
+    for (const pizza of this.pizzaContainer.children) {
+      pizza.classList.add(
+          this._classNameDisabled)
+    }
   }
 
   toggle() {
