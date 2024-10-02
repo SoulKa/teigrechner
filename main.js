@@ -39,7 +39,7 @@ function init() {
   // Set random beer name
   document.getElementById('beer').textContent = getRandomBeer();
 
-  if(localStorage['colorMode'] == COLOR_MODES.DARK){
+  if (localStorage['colorMode'] === COLOR_MODES.DARK) {
     toggleColorScheme();
   }
 }
@@ -185,9 +185,15 @@ function explodePizza(pizza, x, y) {
  * Switches between light and dark mode color scheme
  */
 function toggleColorScheme() {
-  var bodyClassList = document.body.classList;
+  const bodyClassList = document.body.classList;
   bodyClassList.toggle("dark-mode");
 
-  bodyClassList.contains("dark-mode") ? 
-  localStorage['colorMode'] = COLOR_MODES.DARK : localStorage['colorMode'] = COLOR_MODES.LIGHT;
+  // Mirrors the pizza icon when toggling color mode scheme
+  document.getElementById("pizza-image").classList.toggle("flip-x");
+
+  if (bodyClassList.contains("dark-mode")) {
+    localStorage['colorMode'] = COLOR_MODES.DARK;
+  } else {
+    localStorage['colorMode'] = COLOR_MODES.LIGHT;
+  }
 }
