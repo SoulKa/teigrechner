@@ -16,16 +16,23 @@
 </head>
 <body onload="init()">
 
+<nav>
+  <ul>
+    <li><a onclick="changeLanguage('de')">Deutsch</a></li>
+    <li><a onclick="changeLanguage('en')">English</a></li>
+  </ul>
+</nav>
+
 <div id="pizza-container"></div>
 
 <div class="container-md my-5">
   <div class="header-container">
     <div class="header-title">
-      <h1>Pizza Teigrechner</h1>
+      <h1 data-i18n="header_text">Pizza Teigrechner</h1>
     </div>
     <div id="toggle-rain-button" class="header-navElement toggle-rain-button">
-      <span class="toggle-rain-button-label--disable">Pizzaregen&nbsp;stoppen</span>
-      <span class="toggle-rain-button-label--enable">Pizzaregen&nbsp;starten</span>
+      <span data-i18n="pizza_rain_stop" class="toggle-rain-button-label--disable">Pizzaregen&nbsp;stoppen</span>
+      <span data-i18n="pizza_rain_start" class="toggle-rain-button-label--enable">Pizzaregen&nbsp;starten</span>
     </div>
     <div class="header-navElement color-mode-button">
       <button title="Toggle Light / Dark Mode" onclick="toggleColorScheme()" class="pizza-button">
@@ -38,7 +45,8 @@
   <table class="col-sm-8 col-sm-4 px-0 my-2">
     <tr>
       <td>
-        <label for="pizza-diameter" class="form-label">Durchmesser der Pizza (cm)</label>
+        <label data-i18n="pizza_diameter" for="pizza-diameter" class="form-label">Durchmesser der
+          Pizza (cm)</label>
       </td>
       <td>
         <div class="input-group input-group-sm">
@@ -56,7 +64,8 @@
     </tr>
     <tr>
       <td>
-        <label for="pizza-amount" class="form-label">Anzahl der Pizzen</label>
+        <label data-i18n="pizza_amount" for="pizza-amount" class="form-label">Anzahl der
+          Pizzen</label>
       </td>
       <td>
         <div class="input-group input-group-sm">
@@ -74,7 +83,7 @@
     </tr>
     <tr>
       <td>
-        <label for="flour" class="form-label">Mehl Typo 00 (g)</label>
+        <label data-i18n="flour" for="flour" class="form-label">Mehl Typo 00 (g)</label>
       </td>
       <td>
         <input id="flour" class="form-control" readonly>
@@ -82,7 +91,7 @@
     </tr>
     <tr>
       <td>
-        <label for="water" class="form-label">Wasser (ml)</label>
+        <label data-i18n="water" for="water" class="form-label">Wasser (ml)</label>
       </td>
       <td>
         <input id="water" class="form-control" readonly>
@@ -90,7 +99,7 @@
     </tr>
     <tr>
       <td>
-        <label for="yeast" class="form-label">Hefe (g)</label>
+        <label data-i18n="yeast" for="yeast" class="form-label">Hefe (g)</label>
       </td>
       <td>
         <input id="yeast" class="form-control" readonly>
@@ -98,7 +107,7 @@
     </tr>
     <tr>
       <td>
-        <label for="salt" class="form-label">Salz (g)</label>
+        <label data-i18n="salt" for="salt" class="form-label">Salz (g)</label>
       </td>
       <td>
         <input id="salt" class="form-control" readonly>
@@ -106,7 +115,7 @@
     </tr>
     <tr>
       <td>
-        <label for="oil" class="form-label">Olivenöl (EL)</label>
+        <label data-i18n="olive_oil" for="oil" class="form-label">Olivenöl (EL)</label>
       </td>
       <td>
         <input id="oil" class="form-control" readonly>
@@ -238,10 +247,12 @@
     justify-content: end;
     align-items: baseline;
   }
+
   .header-title {
     flex: 1 1 auto;
 
   }
+
   .header-navElement {
     flex: 0 0 min-content;
     position: relative;
@@ -255,20 +266,25 @@
     right: -5px;
     bottom: 0;
   }
+
   .toggle-rain-button {
     flex: 0 0 min-content;
     font-size: 60%;
     border-bottom: 1px solid;
   }
+
   .toggle-rain-button {
     display: block;
   }
+
   .toggle-rain-button-label--enable {
     display: none;
   }
+
   .toggle-rain-button.active .toggle-rain-button-label--disable {
     display: none;
   }
+
   .toggle-rain-button.active .toggle-rain-button-label--enable {
     display: block;
   }

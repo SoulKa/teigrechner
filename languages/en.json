@@ -1,0 +1,14 @@
+{
+  "header_text": "Pizza dough calculator",
+  "pizza_rain_stop": "Stop pizza rain",
+  "pizza_rain_start": "Start pizza rain",
+  "pizza_diameter": "Diameter of pizza (cm)",
+  "pizza_amount": "Amount of pizzas",
+  "flour": "Flour Tipo 00 (g)",
+  "water": "Water (ml)",
+  "yeast": "Yeast (g)",
+  "salt": "Salt (g)",
+  "olive_oil": "Olive oil (Tbsp)",
+  "header_hints": "Hints:",
+  "header_instructions": "Instructions:"
+}
