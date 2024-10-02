@@ -210,7 +210,7 @@ function explode(x, y) {
  */
 function explodePizza(pizza, x, y) {
   pizza.remove();
-  createPizzaSlice();
+  if (slicerDicer.isActive()) createPizzaSlice();
   explode(x, y);
 }
 
