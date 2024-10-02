@@ -18,16 +18,21 @@
 
 <div class="container-md my-5">
   <div class="header-container">
-    <div id="toggle-rain-button" class="toggle-rain-button">
+    <div class="header-title">
+      <h1>Pizza Teigrechner</h1>
+    </div>
+    <div id="toggle-rain-button" class="header-navElement toggle-rain-button">
       <span class="toggle-rain-button-label--disable">Pizzaregen&nbsp;stoppen</span>
       <span class="toggle-rain-button-label--enable">Pizzaregen&nbsp;starten</span>
     </div>
+    <div class="header-navElement color-mode-button">
+      <button title="Toggle Light / Dark Mode" onclick="toggleColorScheme()" class="pizza-button">
+        <img id="pizza-image" src="images/pizza_toggle_color_scheme.png"
+             alt="Pizza icon for button Toggle Light / Dark Mode" class="pizza-image"/>
+      </button>
+    </div>
   </div>
-  <h1>Pizza Teigrechner</h1>
-  <button title="Toggle Light / Dark Mode" onclick="toggleColorScheme()" class="pizza-button">
-    <img id="pizza-image" src="images/pizza_toggle_color_scheme.png"
-         alt="Pizza icon for button Toggle Light / Dark Mode" class="pizza-image"/>
-  </button>
+
   <table class="col-sm-8 col-sm-4 px-0 my-2">
     <tr>
       <td>
@@ -128,7 +133,6 @@
   }
 
   .pizza--disabled {
-    animation-delay: 0s;
     animation-iteration-count: 1;
   }
 
@@ -193,9 +197,6 @@
     height: 2em;
     width: auto;
     margin-right: 20px;
-    position: absolute;
-    top: 0;
-    right: 0;
   }
 
   .flip-x {
@@ -227,14 +228,31 @@
   .header-container {
     width: 100%;
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: row wrap;
     justify-content: end;
+    align-items: baseline;
+  }
+  .header-title {
+    flex: 1 1 auto;
+
+  }
+  .header-navElement {
+    flex: 0 0 min-content;
+    position: relative;
+    margin-right: 10px;
+  }
+
+  .header-navElement:not(:last-child)::after {
+    content: "|";
+    display: block;
+    position: absolute;
+    right: -5px;
+    bottom: 0;
   }
   .toggle-rain-button {
-    color: #000;
     flex: 0 0 min-content;
     font-size: 60%;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid;
   }
   .toggle-rain-button {
     display: block;

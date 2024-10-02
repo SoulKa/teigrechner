@@ -7,32 +7,6 @@ const baseOil = 1; // TS of oil
 const baseArea = Math.PI * Math.pow(28 / 2, 2); // area of a 28 cm pizza
 const baseDough = 180; // grams of dough for a 28 cm pizza
 
-const sliceStateModule = {
-  _active: true,
-  enable: function() {
-    this._active = true;
-    const amount = document.getElementById('pizza-amount').value;
-    const pizzaContainer = document.getElementById('pizza-container');
-    for (const pizza of pizzaContainer.children) {
-      pizza.classList.remove("pizza--disabled")
-    }
-    setNumberOfSlices(amount);
-  },
-  disable: function() {
-    this._active = false;
-    const pizzaContainer = document.getElementById('pizza-container');
-    for (const pizza of pizzaContainer.children) {
-      pizza.classList.add("pizza--disabled")
-    }
-  },
-  toggle: function(){
-    if(this._active) this.disable()
-    else this.enable()
-  },
-  isActive: function(){
-    return this._active;
-  }
-}
 
 const BEERS = ["Wulle", "Franziskaner", "Guiness", "Krombacher",
   "Stuttgarter Herrenpils", "Störtebecker", "Farny", "Spaten Bier",
@@ -43,7 +17,11 @@ const COLOR_MODES = Object.freeze({
   DARK: "dark",
 });
 
+let slicerDicer;
+
 function init() {
+
+  slicerDicer = new SliceStateModule(true);
   // Set default values for input fields
   document.getElementById('pizza-diameter').value = 28;
   document.getElementById('pizza-amount').value = 1;
@@ -69,7 +47,7 @@ function init() {
   //add event listener to slice rain toggle button
   document.getElementById('toggle-rain-button').addEventListener('click', (e)=> {
     e.currentTarget.classList.toggle("active");
-    sliceStateModule.toggle();
+    slicerDicer.toggle();
   })
 
   if (localStorage['colorMode'] === COLOR_MODES.DARK) {
@@ -82,7 +60,7 @@ function init() {
  * @param {number} numPizza The number of full pizza
  */
 function setNumberOfSlices(numPizza) {
-  if (!sliceStateModule.isActive()) return;
+  if (!slicerDicer.isActive()) return;
   const numSlices = Math.min(250, Math.round(numPizza * 8));
   const pizzaContainer = document.getElementById('pizza-container');
 
@@ -229,5 +207,36 @@ function toggleColorScheme() {
     localStorage['colorMode'] = COLOR_MODES.DARK;
   } else {
     localStorage['colorMode'] = COLOR_MODES.LIGHT;
+  }
+}
+
+
+class SliceStateModule {
+  _active = false;
+  _classNameDisabled = "pizza--disabled";
+
+  constructor(initialState = false) {
+    this.pizzaContainer = document.getElementById('pizza-container');
+    this.amountInput = document.getElementById('pizza-amount');
+    this._active = initialState;
+  }
+
+  enable() {
+    this._active = true;
+    for (const pizza of this.pizzaContainer.children) pizza.classList.remove(this._classNameDisabled);
+    setNumberOfSlices(this.amountInput.value);
+  }
+
+  disable() {
+    this._active = false;
+    for (const pizza of this.pizzaContainer.children) pizza.classList.add(this._classNameDisabled)
+  }
+
+  toggle() {
+    return this._active ? this.disable() : this.enable();
+  }
+
+  isActive() {
+    return this._active;
   }
 }
