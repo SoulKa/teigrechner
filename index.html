@@ -18,6 +18,10 @@
 
 <div class="container-md my-5">
   <h1>Pizza Teigrechner</h1>
+  <button title="Toggle Light / Dark Mode" onclick="toggleColorScheme()" class="pizza-button">
+    <img id="pizza-image" src="images/pizza_toggle_color_scheme.png"
+         alt="Pizza icon for button Toggle Light / Dark Mode" class="pizza-image"/>
+  </button>
   <table class="col-sm-8 col-sm-4 px-0 my-2">
     <tr>
       <td>
@@ -164,6 +168,38 @@
       border-radius: 25%;
       animation: pop 1s reverse forwards;
     }
+  }
+
+  .pizza-button {
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    overflow: hidden;
+    outline: none;
+  }
+
+  .pizza-image {
+    height: 2em;
+    width: auto;
+    margin-right: 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .flip-x {
+    transform: scaleX(-1);
+  }
+
+  .dark-mode {
+    background-color: #282828;
+    color: #f0f0f0;
+  }
+
+  .dark-mode input {
+    background-color: #2F2F2F;
+    border: none;
+    color: #f0f0f0;
   }
 
   @keyframes pop {
