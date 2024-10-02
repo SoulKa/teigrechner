@@ -1,16 +1,18 @@
 <!doctype html>
-<html lang="de">
+<html lang="de" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pizza Teigrechner</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-        crossorigin="anonymous">
-  <link rel="stylesheet" href="./styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/lux/bootstrap.min.css"
+        rel="stylesheet">
   <link rel="icon"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍕</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+          crossorigin="anonymous"></script>
+  <script src="./theme.js"></script>
+  <script src="./main.js"></script>
 </head>
 <body onload="init()">
 
@@ -28,7 +30,7 @@
     <div class="header-navElement color-mode-button">
       <button title="Toggle Light / Dark Mode" onclick="toggleColorScheme()" class="pizza-button">
         <img id="pizza-image" src="images/pizza_toggle_color_scheme.png"
-             alt="Pizza icon for button Toggle Light / Dark Mode" class="pizza-image"/>
+             alt="Pizza icon for button Toggle Light / Dark Mode"/>
       </button>
     </div>
   </div>
@@ -39,7 +41,17 @@
         <label for="pizza-diameter" class="form-label">Durchmesser der Pizza (cm)</label>
       </td>
       <td>
-        <input type="number" min="10" max="100" id="pizza-diameter" class="form-control">
+        <div class="input-group input-group-sm">
+          <button class="btn" type="button"
+                  onclick="changeInputValue('pizza-diameter', -1)"
+          >-
+          </button>
+          <input type="text" min="10" max="100" id="pizza-diameter" class="form-control">
+          <button class="btn" type="button"
+                  onclick="changeInputValue('pizza-diameter', 1)"
+          >+
+          </button>
+        </div>
       </td>
     </tr>
     <tr>
@@ -47,7 +59,17 @@
         <label for="pizza-amount" class="form-label">Anzahl der Pizzen</label>
       </td>
       <td>
-        <input type="number" min="1" max="100" id="pizza-amount" class="form-control">
+        <div class="input-group input-group-sm">
+          <button class="btn" type="button"
+                  onclick="changeInputValue('pizza-amount', -1)"
+          >-
+          </button>
+          <input type="text" min="1" max="100" id="pizza-amount" class="form-control">
+          <button class="btn" type="button"
+                  onclick="changeInputValue('pizza-amount', 1)"
+          >+
+          </button>
+        </div>
       </td>
     </tr>
     <tr>
@@ -115,11 +137,6 @@
     </p>
   </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-<script src="./main.js"></script>
 </body>
 </html>
 
@@ -193,7 +210,7 @@
     outline: none;
   }
 
-  .pizza-image {
+  #pizza-image {
     height: 2em;
     width: auto;
     margin-right: 20px;
@@ -201,17 +218,6 @@
 
   .flip-x {
     transform: scaleX(-1);
-  }
-
-  .dark-mode {
-    background-color: #282828;
-    color: #f0f0f0;
-  }
-
-  .dark-mode input {
-    background-color: #2F2F2F;
-    border: none;
-    color: #f0f0f0;
   }
 
   @keyframes pop {

@@ -7,15 +7,37 @@ const baseOil = 1; // TS of oil
 const baseArea = Math.PI * Math.pow(28 / 2, 2); // area of a 28 cm pizza
 const baseDough = 180; // grams of dough for a 28 cm pizza
 
-
 const BEERS = ["Wulle", "Franziskaner", "Guiness", "Krombacher",
   "Stuttgarter Herrenpils", "Störtebecker", "Farny", "Spaten Bier",
   "Chiemseer Helles", "Benediktiner", "Freiberger"];
 
-const COLOR_MODES = Object.freeze({
-  LIGHT: "light",
-  DARK: "dark",
-});
+class Theme {
+
+  static LIGHT = new Theme("lux");
+  static DARK = new Theme("darkly");
+
+  static THEMES = new Map(
+      [Theme.LIGHT, Theme.DARK].map(theme => [theme.name, theme]));
+
+  /**
+   * @param {string} name The name of the bootswatch theme
+   */
+  constructor(name) {
+    this.name = name;
+  }
+
+  get url() {
+    return `https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/${this.name}/bootstrap.min.css`;
+  }
+
+  /**
+   * @param {string} name The name of the bootswatch theme
+   * @return {Theme} The theme with the given name or the default theme
+   */
+  static fromName(name) {
+    return Theme.THEMES.get(name) ?? Theme.LIGHT;
+  }
+}
 
 let slicerDicer;
 
@@ -43,6 +65,8 @@ function init() {
 
   // Set random beer name
   document.getElementById('beer').textContent = getRandomBeer();
+
+  setTheme(getPreferredTheme())
 
   //add event listener to slice rain toggle button
   document.getElementById('toggle-rain-button').addEventListener('click', (e)=> {
@@ -194,20 +218,19 @@ function explodePizza(pizza, x, y) {
 }
 
 /**
- * Switches between light and dark mode color scheme
+ * Changes the value of an input field by a given delta
+ * @param {string} id The id of the input field
+ * @param {number} delta The change in value
  */
-function toggleColorScheme() {
-  const bodyClassList = document.body.classList;
-  bodyClassList.toggle("dark-mode");
+function changeInputValue(id, delta) {
+  /** @type {HTMLInputElement} */
+  const input = document.getElementById(id);
 
-  // Mirrors the pizza icon when toggling color mode scheme
-  document.getElementById("pizza-image").classList.toggle("flip-x");
-
-  if (bodyClassList.contains("dark-mode")) {
-    localStorage['colorMode'] = COLOR_MODES.DARK;
-  } else {
-    localStorage['colorMode'] = COLOR_MODES.LIGHT;
+  const value = parseInt(input.value);
+  if (!isNaN(value)) {
+    input.value = (value + delta).toString();
   }
+  calculateIngredients();
 }
 
 
