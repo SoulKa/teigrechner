@@ -1,3 +1,5 @@
+import { Unit, Ingredient, Recipe } from "./recipe.js";
+
 // Ingredient base amounts for a standard pizza of 30 cm
 const baseFlour = 110; // grams of flour for a 30 cm pizza
 const baseWater = 60; // ml of water
@@ -89,6 +91,123 @@ function init() {
 
   if (localStorage["colorMode"] === COLOR_MODES.DARK) {
     toggleColorScheme();
+  }
+
+  // --- Recipe manager UI wiring ---
+  try {
+    window.recipes = window.recipes || [];
+
+    const ingredientsContainer = document.getElementById("ingredients-container");
+    const addIngredientBtn = document.getElementById("add-ingredient");
+    const addRecipeBtn = document.getElementById("add-recipe");
+
+    function createIngredientRow(name = "", amount = "", unit = Unit.GRAM) {
+      const row = document.createElement("div");
+      row.className = "d-flex gap-2 mb-1 ingredient-row";
+
+      const nameInput = document.createElement("input");
+      nameInput.className = "form-control form-control-sm";
+      nameInput.placeholder = "Zutat";
+      nameInput.value = name;
+
+      const amountInput = document.createElement("input");
+      amountInput.className = "form-control form-control-sm";
+      amountInput.placeholder = "Menge";
+      amountInput.value = amount;
+
+      const unitSelect = document.createElement("select");
+      unitSelect.className = "form-select form-select-sm";
+      [Unit.GRAM, Unit.MILLILITER, Unit.TEASPOON, Unit.TABLESPOON, Unit.PIECE].forEach((u) => {
+        const opt = document.createElement("option");
+        opt.value = u;
+        opt.textContent = u;
+        if (u === unit) opt.selected = true;
+        unitSelect.appendChild(opt);
+      });
+
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "btn btn-sm btn-outline-danger";
+      removeBtn.textContent = "Entfernen";
+      removeBtn.addEventListener("click", () => row.remove());
+
+      row.appendChild(nameInput);
+      row.appendChild(amountInput);
+      row.appendChild(unitSelect);
+      row.appendChild(removeBtn);
+
+      return row;
+    }
+
+    function addIngredientRow() {
+      ingredientsContainer.appendChild(createIngredientRow());
+    }
+
+    function collectRecipeFromForm() {
+      const name = document.getElementById("recipe-name").value.trim();
+      const desc = document.getElementById("recipe-desc").value.trim();
+      const ingredientRows = Array.from(document.getElementsByClassName("ingredient-row"));
+      const ingredients = ingredientRows
+        .map((row) => {
+          const inputs = row.querySelectorAll("input,select");
+          const n = inputs[0].value.trim();
+          const a = parseFloat(inputs[1].value) || 0;
+          const u = inputs[2].value;
+          return n ? new Ingredient(n, a, u) : null;
+        })
+        .filter(Boolean);
+
+      return new Recipe(name || "Unnamed Recipe", desc || "", ingredients);
+    }
+
+    function renderRecipes() {
+      const list = document.getElementById("recipes-list");
+      list.innerHTML = "";
+      window.recipes.forEach((r, idx) => {
+        const card = document.createElement("div");
+        card.className = "card mb-2";
+        const body = document.createElement("div");
+        body.className = "card-body p-2";
+        const title = document.createElement("div");
+        title.innerHTML = `<strong>${r.name}</strong> <small class=\"text-muted\">${r.description}</small>`;
+        const content = document.createElement("pre");
+        content.style.whiteSpace = "pre-wrap";
+        content.textContent = JSON.stringify(r, null, 2);
+        const remove = document.createElement("button");
+        remove.className = "btn btn-sm btn-outline-danger mt-1";
+        remove.textContent = "Löschen";
+        remove.addEventListener("click", () => {
+          window.recipes.splice(idx, 1);
+          renderRecipes();
+        });
+
+        body.appendChild(title);
+        body.appendChild(content);
+        body.appendChild(remove);
+        card.appendChild(body);
+        list.appendChild(card);
+      });
+    }
+
+    // initial ingredient row
+    addIngredientRow();
+    addIngredientBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      addIngredientRow();
+    });
+
+    addRecipeBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      try {
+        const recipe = collectRecipeFromForm();
+        window.recipes.push(recipe);
+        renderRecipes();
+      } catch (err) {
+        console.warn("Failed to add recipe:", err);
+      }
+    });
+  } catch (e) {
+    console.warn("Recipe manager initialization failed:", e);
   }
 }
 
