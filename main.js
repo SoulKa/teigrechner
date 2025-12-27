@@ -7,17 +7,27 @@ const baseOil = 1; // TS of oil
 const baseArea = Math.PI * Math.pow(28 / 2, 2); // area of a 28 cm pizza
 const baseDough = 180; // grams of dough for a 28 cm pizza
 
-const BEERS = ["Wulle", "Franziskaner", "Guiness", "Krombacher",
-  "Stuttgarter Herrenpils", "Störtebecker", "Farny", "Spaten Bier",
-  "Chiemseer Helles", "Benediktiner", "Freiberger"];
+const BEERS = [
+  "Wulle",
+  "Franziskaner",
+  "Guiness",
+  "Krombacher",
+  "Stuttgarter Herrenpils",
+  "Störtebecker",
+  "Farny",
+  "Spaten Bier",
+  "Chiemseer Helles",
+  "Benediktiner",
+  "Freiberger",
+];
 
 class Theme {
-
   static LIGHT = new Theme("lux");
   static DARK = new Theme("darkly");
 
   static THEMES = new Map(
-      [Theme.LIGHT, Theme.DARK].map(theme => [theme.name, theme]));
+    [Theme.LIGHT, Theme.DARK].map((theme) => [theme.name, theme])
+  );
 
   /**
    * @param {string} name The name of the bootswatch theme
@@ -42,39 +52,42 @@ class Theme {
 let slicerDicer;
 
 function init() {
-
   slicerDicer = new SliceStateModule(true);
   // Set default values for input fields
-  document.getElementById('pizza-diameter').value = 28;
-  document.getElementById('pizza-amount').value = 1;
-  document.getElementById('flour').value = baseFlour;
-  document.getElementById('water').value = baseWater;
-  document.getElementById('yeast').value = baseYeast;
-  document.getElementById('salt').value = baseSalt;
-  document.getElementById('oil').value = baseOil;
-  document.getElementById('dough').textContent = baseDough + "g";
+  document.getElementById("pizza-diameter").value = 28;
+  document.getElementById("pizza-amount").value = 1;
+  document.getElementById("flour").value = baseFlour;
+  document.getElementById("water").value = baseWater;
+  document.getElementById("yeast").value = baseYeast;
+  document.getElementById("salt").value = baseSalt;
+  document.getElementById("oil").value = baseOil;
+  document.getElementById("dough").textContent = baseDough + "g";
 
   // Add event listeners to input fields
-  document.getElementById('pizza-diameter').addEventListener('input',
-      calculateIngredients);
-  document.getElementById('pizza-amount').addEventListener('input',
-      calculateIngredients);
+  document
+    .getElementById("pizza-diameter")
+    .addEventListener("input", calculateIngredients);
+  document
+    .getElementById("pizza-amount")
+    .addEventListener("input", calculateIngredients);
 
   // Calculate initial ingredient amounts
   calculateIngredients();
 
   // Set random beer name
-  document.getElementById('beer').textContent = getRandomBeer();
+  document.getElementById("beer").textContent = getRandomBeer();
 
-  setTheme(getPreferredTheme())
+  setTheme(getPreferredTheme());
 
   //add event listener to slice rain toggle button
-  document.getElementById('toggle-rain-button').addEventListener('click', (e)=> {
-    e.currentTarget.classList.toggle("active");
-    slicerDicer.toggle();
-  })
+  document
+    .getElementById("toggle-rain-button")
+    .addEventListener("click", (e) => {
+      e.currentTarget.classList.toggle("active");
+      slicerDicer.toggle();
+    });
 
-  if (localStorage['colorMode'] === COLOR_MODES.DARK) {
+  if (localStorage["colorMode"] === COLOR_MODES.DARK) {
     toggleColorScheme();
   }
 }
@@ -86,7 +99,7 @@ function init() {
 function setNumberOfSlices(numPizza) {
   if (!slicerDicer.isActive()) return;
   const numSlices = Math.min(250, Math.round(numPizza * 8));
-  const pizzaContainer = document.getElementById('pizza-container');
+  const pizzaContainer = document.getElementById("pizza-container");
 
   // Remove extra slices
   while (pizzaContainer.children.length > numSlices) {
@@ -103,8 +116,8 @@ function setNumberOfSlices(numPizza) {
  * Function to calculate the ingredient amounts based on the pizza diameter and amount
  */
 function calculateIngredients() {
-  const diameter = document.getElementById('pizza-diameter').value;
-  const amount = document.getElementById('pizza-amount').value;
+  const diameter = document.getElementById("pizza-diameter").value;
+  const amount = document.getElementById("pizza-amount").value;
 
   // Calculate area of the pizza
   const currentArea = Math.PI * Math.pow(diameter / 2, 2); // area of the current pizza
@@ -113,13 +126,13 @@ function calculateIngredients() {
   const scaleFactor = (currentArea / baseArea) * amount;
 
   // Calculate ingredient amounts
-  document.getElementById('flour').value = Math.round(baseFlour * scaleFactor);
-  document.getElementById('water').value = Math.round(baseWater * scaleFactor);
-  document.getElementById('yeast').value = Math.round(baseYeast * scaleFactor);
-  document.getElementById('salt').value = (baseSalt * scaleFactor).toFixed(1);
-  document.getElementById('oil').value = (baseOil * scaleFactor).toFixed(1);
-  document.getElementById('dough').textContent = Math.round(
-      baseDough * currentArea / baseArea) + "g";
+  document.getElementById("flour").value = Math.round(baseFlour * scaleFactor);
+  document.getElementById("water").value = Math.round(baseWater * scaleFactor);
+  document.getElementById("yeast").value = Math.round(baseYeast * scaleFactor);
+  document.getElementById("salt").value = (baseSalt * scaleFactor).toFixed(1);
+  document.getElementById("oil").value = (baseOil * scaleFactor).toFixed(1);
+  document.getElementById("dough").textContent =
+    Math.round((baseDough * currentArea) / baseArea) + "g";
 
   setNumberOfSlices(amount);
 }
@@ -142,9 +155,9 @@ function getRandomBeer() {
  */
 function createPizzaSlice() {
   // Create a new pizza element
-  const pizza = document.createElement('div');
-  pizza.classList.add('pizza');
-  pizza.innerHTML = '&#127829;'; // Pizza emoji 🍕
+  const pizza = document.createElement("div");
+  pizza.classList.add("pizza");
+  pizza.innerHTML = "&#127829;"; // Pizza emoji 🍕
 
   // Randomize the size, position, and animation speed
   const size = getRandom(20, 80); // Random size between 20px and 80px
@@ -160,13 +173,13 @@ function createPizzaSlice() {
   pizza.style.transform = `rotate(${getRandom(0, 360)}deg)`;
 
   // Append the pizza to the container
-  document.getElementById('pizza-container').appendChild(pizza);
+  document.getElementById("pizza-container").appendChild(pizza);
 
   // Remove the pizza after the animation is complete
-  pizza.addEventListener('animationend', () => pizza.remove());
+  pizza.addEventListener("animationend", () => pizza.remove());
 
   // Add click event listener for explosion
-  pizza.addEventListener('click', (e) => explodePizza(pizza, e.pageX, e.pageY));
+  pizza.addEventListener("click", (e) => explodePizza(pizza, e.pageX, e.pageY));
 }
 
 /**
@@ -175,28 +188,32 @@ function createPizzaSlice() {
  */
 function explode(x, y) {
   const particles = 150;
-  const explosion = document.createElement('div');
-  explosion.classList.add('explosion');
+  const explosion = document.createElement("div");
+  explosion.classList.add("explosion");
 
   // put the explosion container into the body to be able to get it's size
-  document.querySelector('body').append(explosion);
+  document.querySelector("body").append(explosion);
 
   // position the container to be centered on click
-  explosion.style.left = (x - explosion.offsetWidth / 2) + "px";
-  explosion.style.top = (y - explosion.offsetHeight / 2) + "px";
+  explosion.style.left = x - explosion.offsetWidth / 2 + "px";
+  explosion.style.top = y - explosion.offsetHeight / 2 + "px";
 
   for (let i = 0; i < particles; i++) {
     // positioning x,y of the particle on the circle (little randomized radius)
-    const x = (explosion.offsetWidth / 2) + getRandom(80, 150) * Math.cos(
-        2 * Math.PI * i / getRandom(particles - 10, particles + 10));
-    const y = (explosion.offsetHeight / 2) + getRandom(80, 150) * Math.sin(
-        2 * Math.PI * i / getRandom(particles - 10, particles + 10));
+    const x =
+      explosion.offsetWidth / 2 +
+      getRandom(80, 150) *
+        Math.cos((2 * Math.PI * i) / getRandom(particles - 10, particles + 10));
+    const y =
+      explosion.offsetHeight / 2 +
+      getRandom(80, 150) *
+        Math.sin((2 * Math.PI * i) / getRandom(particles - 10, particles + 10));
 
-    const particle = document.createElement('div');
-    particle.classList.add('particle');
+    const particle = document.createElement("div");
+    particle.classList.add("particle");
     particle.style.backgroundColor = `rgb(${getRandom(0, 255)},0,0)`;
-    particle.style.top = y + 'px';
-    particle.style.left = x + 'px';
+    particle.style.top = y + "px";
+    particle.style.left = x + "px";
 
     if (i === 0) {
       particle.onanimationend = () => explosion.remove();
@@ -213,7 +230,7 @@ function explode(x, y) {
  */
 function explodePizza(pizza, x, y) {
   pizza.remove();
-  if(slicerDicer.isActive()) createPizzaSlice();
+  if (slicerDicer.isActive()) createPizzaSlice();
   explode(x, y);
 }
 
@@ -233,26 +250,27 @@ function changeInputValue(id, delta) {
   calculateIngredients();
 }
 
-
 class SliceStateModule {
   _active = false;
   _classNameDisabled = "pizza--disabled";
 
   constructor(initialState = false) {
-    this.pizzaContainer = document.getElementById('pizza-container');
-    this.amountInput = document.getElementById('pizza-amount');
+    this.pizzaContainer = document.getElementById("pizza-container");
+    this.amountInput = document.getElementById("pizza-amount");
     this._active = initialState;
   }
 
   enable() {
     this._active = true;
-    for (const pizza of this.pizzaContainer.children) pizza.classList.remove(this._classNameDisabled);
+    for (const pizza of this.pizzaContainer.children)
+      pizza.classList.remove(this._classNameDisabled);
     setNumberOfSlices(this.amountInput.value);
   }
 
   disable() {
     this._active = false;
-    for (const pizza of this.pizzaContainer.children) pizza.classList.add(this._classNameDisabled)
+    for (const pizza of this.pizzaContainer.children)
+      pizza.classList.add(this._classNameDisabled);
   }
 
   toggle() {

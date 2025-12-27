@@ -1,143 +1,195 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de" data-bs-theme="light">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pizza Teigrechner</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/lux/bootstrap.min.css"
-        rel="stylesheet">
-  <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍕</text></svg>">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-          integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-          crossorigin="anonymous"></script>
-  <script src="./theme.js"></script>
-  <script src="./main.js"></script>
-</head>
-<body onload="init()">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pizza Teigrechner</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/lux/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍕</text></svg>"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script src="./theme.js"></script>
+    <script src="./main.js"></script>
+  </head>
+  <body onload="init()">
+    <div id="pizza-container"></div>
 
-<div id="pizza-container"></div>
-
-<div class="container-md my-5">
-  <div class="header-container">
-    <div class="header-title">
-      <h1>Pizza Teigrechner</h1>
-    </div>
-    <div id="toggle-rain-button" class="header-navElement toggle-rain-button">
-      <span class="toggle-rain-button-label--disable">Pizzaregen&nbsp;stoppen</span>
-      <span class="toggle-rain-button-label--enable">Pizzaregen&nbsp;starten</span>
-    </div>
-    <div class="header-navElement color-mode-button">
-      <button title="Toggle Light / Dark Mode" onclick="toggleColorScheme()" class="pizza-button">
-        <img id="pizza-image" src="images/pizza_toggle_color_scheme.png"
-             alt="Pizza icon for button Toggle Light / Dark Mode"/>
-      </button>
-    </div>
-  </div>
-
-  <table class="col-sm-8 col-sm-4 px-0 my-2">
-    <tr>
-      <td>
-        <label for="pizza-diameter" class="form-label">Durchmesser der Pizza (cm)</label>
-      </td>
-      <td>
-        <div class="input-group input-group-sm">
-          <button class="btn" type="button"
-                  onclick="changeInputValue('pizza-diameter', -1)"
-          >-
-          </button>
-          <input type="text" min="10" max="100" id="pizza-diameter" class="form-control">
-          <button class="btn" type="button"
-                  onclick="changeInputValue('pizza-diameter', 1)"
-          >+
+    <div class="container-md my-5">
+      <div class="header-container">
+        <div class="header-title">
+          <h1>Pizza Teigrechner</h1>
+        </div>
+        <div
+          id="toggle-rain-button"
+          class="header-navElement toggle-rain-button"
+        >
+          <span class="toggle-rain-button-label--disable"
+            >Pizzaregen&nbsp;stoppen</span
+          >
+          <span class="toggle-rain-button-label--enable"
+            >Pizzaregen&nbsp;starten</span
+          >
+        </div>
+        <div class="header-navElement color-mode-button">
+          <button
+            title="Toggle Light / Dark Mode"
+            onclick="toggleColorScheme()"
+            class="pizza-button"
+          >
+            <img
+              id="pizza-image"
+              src="images/pizza_toggle_color_scheme.png"
+              alt="Pizza icon for button Toggle Light / Dark Mode"
+            />
           </button>
         </div>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <label for="pizza-amount" class="form-label">Anzahl der Pizzen</label>
-      </td>
-      <td>
-        <div class="input-group input-group-sm">
-          <button class="btn" type="button"
-                  onclick="changeInputValue('pizza-amount', -1)"
-          >-
-          </button>
-          <input type="text" min="1" max="100" id="pizza-amount" class="form-control">
-          <button class="btn" type="button"
-                  onclick="changeInputValue('pizza-amount', 1)"
-          >+
-          </button>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <label for="flour" class="form-label">Mehl Typo 00 (g)</label>
-      </td>
-      <td>
-        <input id="flour" class="form-control" readonly>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <label for="water" class="form-label">Wasser (ml)</label>
-      </td>
-      <td>
-        <input id="water" class="form-control" readonly>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <label for="yeast" class="form-label">Hefe (g)</label>
-      </td>
-      <td>
-        <input id="yeast" class="form-control" readonly>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <label for="salt" class="form-label">Salz (g)</label>
-      </td>
-      <td>
-        <input id="salt" class="form-control" readonly>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <label for="oil" class="form-label">Olivenöl (EL)</label>
-      </td>
-      <td>
-        <input id="oil" class="form-control" readonly>
-      </td>
-    </tr>
-  </table>
+      </div>
 
-  <div class="my-2">
-    <h5>Tipps:</h5>
-    <ul>
-      <li>Ein Hefewürfel hat 42g</li>
-      <li>Ein gehäufter TL Salz hat 6g</li>
-      <li>Den Teig kann man über dem Backofen gehen lassen, wenn dieser vorwärmt</li>
-      <li><span id="beer"></span> kaltstellen nicht vergessen</li>
-    </ul>
-  </div>
+      <table class="col-sm-8 col-sm-4 px-0 my-2">
+        <tr>
+          <td>
+            <label for="pizza-diameter" class="form-label"
+              >Durchmesser der Pizza (cm)</label
+            >
+          </td>
+          <td>
+            <div class="input-group input-group-sm">
+              <button
+                class="btn"
+                type="button"
+                onclick="changeInputValue('pizza-diameter', -1)"
+              >
+                -
+              </button>
+              <input
+                type="text"
+                min="10"
+                max="100"
+                id="pizza-diameter"
+                class="form-control"
+              />
+              <button
+                class="btn"
+                type="button"
+                onclick="changeInputValue('pizza-diameter', 1)"
+              >
+                +
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="pizza-amount" class="form-label"
+              >Anzahl der Pizzen</label
+            >
+          </td>
+          <td>
+            <div class="input-group input-group-sm">
+              <button
+                class="btn"
+                type="button"
+                onclick="changeInputValue('pizza-amount', -1)"
+              >
+                -
+              </button>
+              <input
+                type="text"
+                min="1"
+                max="100"
+                id="pizza-amount"
+                class="form-control"
+              />
+              <button
+                class="btn"
+                type="button"
+                onclick="changeInputValue('pizza-amount', 1)"
+              >
+                +
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="flour" class="form-label">Mehl Typo 00 (g)</label>
+          </td>
+          <td>
+            <input id="flour" class="form-control" readonly />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="water" class="form-label">Wasser (ml)</label>
+          </td>
+          <td>
+            <input id="water" class="form-control" readonly />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="yeast" class="form-label">Hefe (g)</label>
+          </td>
+          <td>
+            <input id="yeast" class="form-control" readonly />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="salt" class="form-label">Salz (g)</label>
+          </td>
+          <td>
+            <input id="salt" class="form-control" readonly />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="oil" class="form-label">Olivenöl (EL)</label>
+          </td>
+          <td>
+            <input id="oil" class="form-control" readonly />
+          </td>
+        </tr>
+      </table>
 
-  <div class="my-2">
-    <h5>Zubereitung:</h5>
-    <p>
-      Die Hefe und eine Prise Zucker in Wasser auflösen und 5min gehen lassen. Das Mehl in eine
-      Schüssel geben und eine Kuhle in die Mitte drücken. Nun das Öl in die Kuhle gießen und das
-      Salz dazu geben. Anschließend das Hefe-Wasser-Gemisch dazugeben.
-      Jetzt muss alles gut durch von Hand geknetet werden. Am besten beginnt man mit den Fingern das
-      Salz aufzulösen und schrittweise das Mehl in die Flüssigkeit zu rühren.
-      Am Ende eine Stunde gehen lassen und vor dem Backen am besten schon in <span
-        id="dough"></span> schwere Teiglinge formen. Bei maximaler Temperatur auf einem heißen Pizzastein ca. 7min backen.
-    </p>
-  </div>
-</div>
-</body>
+      <div class="my-2">
+        <h5>Tipps:</h5>
+        <ul>
+          <li>Ein Hefewürfel hat 42g</li>
+          <li>Ein gehäufter TL Salz hat 6g</li>
+          <li>
+            Den Teig kann man über dem Backofen gehen lassen, wenn dieser
+            vorwärmt
+          </li>
+          <li><span id="beer"></span> kaltstellen nicht vergessen</li>
+        </ul>
+      </div>
+
+      <div class="my-2">
+        <h5>Zubereitung:</h5>
+        <p>
+          Die Hefe und eine Prise Zucker in Wasser auflösen und 5min gehen
+          lassen. Das Mehl in eine Schüssel geben und eine Kuhle in die Mitte
+          drücken. Nun das Öl in die Kuhle gießen und das Salz dazu geben.
+          Anschließend das Hefe-Wasser-Gemisch dazugeben. Jetzt muss alles gut
+          durch von Hand geknetet werden. Am besten beginnt man mit den Fingern
+          das Salz aufzulösen und schrittweise das Mehl in die Flüssigkeit zu
+          rühren. Am Ende eine Stunde gehen lassen und vor dem Backen am besten
+          schon in <span id="dough"></span> schwere Teiglinge formen. Bei
+          maximaler Temperatur auf einem heißen Pizzastein ca. 7min backen.
+        </p>
+      </div>
+    </div>
+  </body>
 </html>
 
 <style>
@@ -146,7 +198,7 @@
     top: -100px; /* Start above the screen */
     animation: fall linear infinite;
     user-select: none; /* Disable text selection */
-    transition: 1.5s cubic-bezier(.17, .67, 0, 1.34); /* Smooth explosion */
+    transition: 1.5s cubic-bezier(0.17, 0.67, 0, 1.34); /* Smooth explosion */
   }
 
   .pizza--disabled {
@@ -179,7 +231,9 @@
   }
 
   * {
-    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='48' viewport='0 0 100 100' style='fill:black;font-size:24px;'><text y='50%'>🍺</text></svg>") 16 0, auto;
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='48' viewport='0 0 100 100' style='fill:black;font-size:24px;'><text y='50%'>🍺</text></svg>")
+        16 0,
+      auto;
   }
 
   body {
@@ -240,7 +294,6 @@
   }
   .header-title {
     flex: 1 1 auto;
-
   }
   .header-navElement {
     flex: 0 0 min-content;
