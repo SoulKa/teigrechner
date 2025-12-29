@@ -79,6 +79,8 @@ export class Recipe {
     public readonly description: string,
     public readonly ingredients: IngredientQuantity[],
     public readonly instructions: string[],
+    public readonly basePizzaSize: number, // in cm diameter
+    public readonly basePizzaCount: number,
   ) {}
 
   get weight(): Quantity {
@@ -105,5 +107,38 @@ export class Recipe {
       'Add your favorite toppings and bake on the preheated stone or baking sheet for 7-10 minutes, or until the crust is golden and crispy.',
       'Remove from the oven, slice, and enjoy your New Haven-style pizza!',
     ],
+    28, // base pizza size in cm
+    3, // base pizza count
   )
+}
+
+export class RecipeScaler {
+  /**
+   * Scales a recipe based on pizza size and count.
+   * Scaling factor is based on area (proportional to diameter squared) and count.
+   */
+  static scale(recipe: Recipe, targetPizzaSize: number, targetPizzaCount: number): Recipe {
+    // Calculate area ratio: (targetSize² * targetCount) / (baseSize² * baseCount)
+    const baseArea = Math.PI * Math.pow(recipe.basePizzaSize / 2, 2)
+    const targetArea = Math.PI * Math.pow(targetPizzaSize / 2, 2)
+    const scaleFactor = (targetArea * targetPizzaCount) / (baseArea * recipe.basePizzaCount)
+
+    // Scale all ingredients
+    const scaledIngredients = recipe.ingredients.map(
+      (iq) =>
+        new IngredientQuantity(
+          iq.ingredient,
+          new Quantity(Math.round(iq.quantity.amount * scaleFactor * 10) / 10, iq.quantity.unit),
+        ),
+    )
+
+    return new Recipe(
+      recipe.name,
+      recipe.description,
+      scaledIngredients,
+      recipe.instructions,
+      targetPizzaSize,
+      targetPizzaCount,
+    )
+  }
 }

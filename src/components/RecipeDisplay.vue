@@ -1,9 +1,17 @@
 <script setup lang="ts">
-import { Recipe } from '@/data/recipes'
+import { ref, computed } from 'vue'
+import { Recipe, RecipeScaler } from '@/data/recipes'
 
-defineProps<{
+const props = defineProps<{
   recipe: Recipe
 }>()
+
+const pizzaSize = ref(props.recipe.basePizzaSize)
+const pizzaCount = ref(props.recipe.basePizzaCount)
+
+const scaledRecipe = computed(() =>
+  RecipeScaler.scale(props.recipe, pizzaSize.value, pizzaCount.value),
+)
 </script>
 
 <template>
@@ -11,20 +19,48 @@ defineProps<{
     <div class="recipe-header">
       <h1>{{ recipe.name }}</h1>
       <p class="description">{{ recipe.description }}</p>
+
+      <div class="recipe-controls">
+        <div class="control-group">
+          <label for="pizza-size">Pizza Size (cm)</label>
+          <input
+            id="pizza-size"
+            type="number"
+            v-model.number="pizzaSize"
+            min="15"
+            max="50"
+            step="1"
+          />
+        </div>
+        <div class="control-group">
+          <label for="pizza-count">Number of Pizzas</label>
+          <input
+            id="pizza-count"
+            type="number"
+            v-model.number="pizzaCount"
+            min="1"
+            max="20"
+            step="1"
+          />
+        </div>
+      </div>
     </div>
 
     <div class="recipe-content">
       <section class="ingredients-section">
         <h2>Ingredients</h2>
         <ul class="ingredients-list">
-          <li v-for="(entry, index) in recipe.ingredients" :key="index" class="ingredient-item">
+          <li
+            v-for="(entry, index) in scaledRecipe.ingredients"
+            :key="index"
+            class="ingredient-item"
+          >
             <div class="ingredient-text">
               <span class="ingredient-amount"
                 >{{ entry.quantity.amount }} {{ entry.quantity.unit.symbol }}</span
               >
               <span class="ingredient-name">{{ entry.ingredient.name }}</span>
             </div>
-            <span class="ingredient-quantity">≈{{ entry.quantity }}</span>
           </li>
         </ul>
       </section>
@@ -69,6 +105,39 @@ h1 {
   margin: 0.5rem 0 1.5rem 0;
   font-size: 1.1rem;
   color: #6b7280;
+}
+
+.recipe-controls {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.control-group label {
+  font-weight: 600;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+.control-group input {
+  padding: 0.5rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  width: 150px;
+  transition: border-color 0.2s;
+}
+
+.control-group input:focus {
+  outline: none;
+  border-color: #d97706;
 }
 
 .recipe-meta {
