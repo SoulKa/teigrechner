@@ -20,10 +20,14 @@ export class Unit {
 }
 
 export class Ingredient {
-  constructor(
+  private static nextId = 1
+
+  public readonly id = Ingredient.nextId++
+
+  private constructor(
     public readonly name: string,
 
-    // Density in g/cm³. Optional; defaults to none
+    /** Density in g/cm³. Optional; defaults to none */
     public readonly density: number = 0,
   ) {}
 
@@ -76,6 +80,10 @@ export class IngredientQuantity {
   toString(): string {
     return `${this.quantity} ${this.ingredient.name}`
   }
+
+  multiply(factor: number): IngredientQuantity {
+    return new IngredientQuantity(this.ingredient, this.quantity.multiply(factor))
+  }
 }
 
 type Instruction = string | ((recipe: Recipe) => string)
@@ -106,10 +114,16 @@ export class Recipe {
     )
   }
 
+  getIngredient(ingredient: Ingredient): IngredientQuantity {
+    const iq = this.ingredients.find((iq) => iq.ingredient.id === ingredient.id)
+    if (iq === undefined) {
+      throw new Error(`Ingredient "${ingredient.name}" not found in recipe "${this.name}".`)
+    }
+    return iq
+  }
+
   getIngredientQuantity(ingredient: Ingredient): Quantity {
-    const iq = this.ingredients.find((iq) => iq.ingredient === ingredient)
-    if (!iq) throw new Error(`Ingredient ${ingredient.name} not found in recipe ${this.name}.`)
-    return iq.quantity
+    return this.getIngredient(ingredient).quantity
   }
 
   static readonly NEW_HAVEN = new Recipe(
@@ -183,19 +197,10 @@ export class RecipeScaler {
     const targetArea = Math.PI * Math.pow(targetDiameter / 2, 2)
     const scaleFactor = (targetArea * targetPortions) / (baseArea * recipe.portions)
 
-    // Scale all ingredients
-    const scaledIngredients = recipe.ingredients.map(
-      (iq) =>
-        new IngredientQuantity(
-          iq.ingredient,
-          new Quantity(Math.round(iq.quantity.amount * scaleFactor * 10) / 10, iq.quantity.unit),
-        ),
-    )
-
     return new Recipe(
       recipe.name,
       recipe.description,
-      scaledIngredients,
+      recipe.ingredients.map((iq) => iq.multiply(scaleFactor)),
       recipe.instructions,
       targetDiameter,
       targetPortions,

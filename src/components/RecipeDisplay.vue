@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Recipe, RecipeScaler } from '@/data/recipes'
 
 const props = defineProps<{
@@ -8,6 +8,19 @@ const props = defineProps<{
 
 const pizzaSize = ref(props.recipe.diameter)
 const pizzaCount = ref(props.recipe.portions)
+
+// Reset inputs when a different recipe is selected
+watch(
+  () => props.recipe,
+  (newRecipe) => {
+    const previousCount = pizzaCount.value
+    pizzaSize.value = newRecipe.diameter
+    // Keep pizza count aligned to the new recipe's default portions
+    // by snapping to the nearest multiple of the new default based on the prior count.
+    const multiple = Math.max(1, Math.round(previousCount / newRecipe.portions))
+    pizzaCount.value = newRecipe.portions * multiple
+  },
+)
 
 const scaledRecipe = computed(() =>
   RecipeScaler.scale(props.recipe, pizzaSize.value, pizzaCount.value),
@@ -56,9 +69,7 @@ const scaledRecipe = computed(() =>
             class="ingredient-item"
           >
             <div class="ingredient-text">
-              <span class="ingredient-amount"
-                >{{ entry.quantity.amount }} {{ entry.quantity.unit.symbol }}</span
-              >
+              <span class="ingredient-amount">{{ entry.quantity }}</span>
               <span class="ingredient-name">{{ entry.ingredient.name }}</span>
             </div>
           </li>
