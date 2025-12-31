@@ -31,6 +31,7 @@ export class Ingredient {
   static readonly WATER = new Ingredient('Wasser', 0.997)
   static readonly FINE_GRAINED_SEA_SALT = new Ingredient('Feines Meersalz', 2.16)
   static readonly OLIVE_OIL = new Ingredient('Olivenöl', 0.915)
+  static readonly FRESH_YEAST = new Ingredient('Frische Hefe', 0.95)
 }
 
 export class Quantity {
@@ -47,10 +48,10 @@ export class Quantity {
   }
 
   toString(): string {
-    return `${this.amount} ${this.unit.symbol}`
+    return `${Math.round(this.amount * 10) / 10} ${this.unit.symbol}`
   }
 
-  static sum(quantities: Quantity[]): Quantity {
+  static sum(...quantities: Quantity[]): Quantity {
     return new Quantity(
       quantities.reduce((sum, q) => sum + q.getWeight().amount, 0),
       Unit.GRAMS,
@@ -92,7 +93,7 @@ export class Recipe {
   ) {}
 
   get weight(): Quantity {
-    return Quantity.sum(this.ingredients.map((iq) => iq.weight))
+    return Quantity.sum(...this.ingredients.map((iq) => iq.weight))
   }
 
   get weightPerPizza(): Quantity {
@@ -105,6 +106,12 @@ export class Recipe {
     )
   }
 
+  getIngredientQuantity(ingredient: Ingredient): Quantity {
+    const iq = this.ingredients.find((iq) => iq.ingredient === ingredient)
+    if (!iq) throw new Error(`Ingredient ${ingredient.name} not found in recipe ${this.name}.`)
+    return iq.quantity
+  }
+
   static readonly NEW_HAVEN = new Recipe(
     'New Haven-Style',
     'Ein klassischer New Haven-Style Pizzateig, bekannt für seine dünne, knusprige Kruste mit einem leicht knätschigem Biss.',
@@ -113,15 +120,16 @@ export class Recipe {
       new IngredientQuantity(Ingredient.WATER, new Quantity(300, Unit.MILLILITERS)),
       new IngredientQuantity(Ingredient.FINE_GRAINED_SEA_SALT, new Quantity(15, Unit.GRAMS)),
       new IngredientQuantity(Ingredient.OLIVE_OIL, new Quantity(15, Unit.GRAMS)),
+      new IngredientQuantity(Ingredient.FRESH_YEAST, new Quantity(1, Unit.GRAMS)),
     ],
     [
       'Das Mehl in eine große Schüssel geben.',
-      'Gut die Hälfte des Wassers hinzufügen und mit den Händen unterkneten.',
-      'Nach und nach das restliche Wasser hinzufügen und weiterkneten, bis der Teig nicht mehr klebt.',
+      'Gut die Hälfte des Wassers hinzufügen, die Hefe reinbröseln und mit den Händen unterkneten.',
+      'Nach und nach das restliche Wasser hinzufügen und weiterkneten, bis der Teig nicht mehr klebt (das kann schonmal 15min dauern).',
       (recipe) =>
-        `Das Salz (${recipe.ingredients[2]!.quantity}) hinzufügen und weiterkneten, bis es vollständig eingearbeitet ist. Der Teig sollte danach weich und elastisch sein.`,
+        `Das Salz (${recipe.getIngredientQuantity(Ingredient.FINE_GRAINED_SEA_SALT)}) hinzufügen und weiterkneten, bis es vollständig eingearbeitet ist. Der Teig sollte danach weich und elastisch sein.`,
       (recipe) =>
-        `Das Olivenöl (${recipe.ingredients[3]!.quantity}) hinzufügen und erneut kneten, bis es vollständig eingearbeitet ist.`,
+        `Das Olivenöl (${recipe.getIngredientQuantity(Ingredient.OLIVE_OIL)}) hinzufügen und erneut kneten, bis es vollständig eingearbeitet ist.`,
       'Den Teig zu einer Kugel formen, auf die Arbeitsfläche legen und mit der Schüssel abdecken.',
       '10min ruhen lassen.',
       (recipe) =>
@@ -129,8 +137,38 @@ export class Recipe {
       'Jede Portion zu einer strammen Kugel schleifen und in eine Luftdichte Box legen. Im Kühlschrank 18-24h reifen lassen.',
       'Vor dem Ausrollen den Teig 3-4h bei Raumtemperatur akklimatisieren lassen.',
     ],
-    28, // base pizza size in cm
-    4, // base pizza count
+    28,
+    4,
+  )
+
+  static readonly NEAPOLITAN = new Recipe(
+    'Neapolitanisch',
+    'Der Klassiker und Weltkulturerbe: Neapolitanischer Pizzateig mit einer weichen, luftigen Kruste und einem zarten Biss.',
+    [
+      new IngredientQuantity(Ingredient.PIZZA_FLOUR_00, new Quantity(500, Unit.GRAMS)),
+      new IngredientQuantity(Ingredient.WATER, new Quantity(325, Unit.MILLILITERS)),
+      new IngredientQuantity(Ingredient.FINE_GRAINED_SEA_SALT, new Quantity(15, Unit.GRAMS)),
+      new IngredientQuantity(Ingredient.OLIVE_OIL, new Quantity(15, Unit.GRAMS)),
+      new IngredientQuantity(Ingredient.FRESH_YEAST, new Quantity(1.5, Unit.GRAMS)),
+    ],
+    [
+      'Das Mehl in eine große Schüssel geben.',
+      (recipe) =>
+        `Ca 90% des Wassers (${recipe.getIngredientQuantity(Ingredient.WATER).multiply(0.9)}) hinzufügen und mit einem Löffel vermischen.`,
+      'Den Teig mit einem Handtuch abgedeckt 30min autolysieren lassen.',
+      'Die Hefe im restlichen Wasser auflösen und zum Teig geben. Mit den Händen unterkneten bis das Wasser vollständig aufgenommen ist.',
+      (recipe) =>
+        `Die ${recipe.getIngredientQuantity(Ingredient.FINE_GRAINED_SEA_SALT)} Salz hinzufügen und weiterkneten bis es eingearbeitet ist.`,
+      'Den Teig auf die Arbeitsfläche geben und 15-20min weiterkneten, bis er glatt und elastisch ist.',
+      'Jetzt den Teig dehnen und falten, anschließend zu einer Kugel schleifen. Noch einmal 15min bei Zimmertemperatur ruhen lassen.',
+      'Den Teig für 24h zur Stockgare in den Kühlschrank stellen.',
+      (recipe) =>
+        `Den Teig in ${recipe.portions} gleich große Portionen (je ca. ${recipe.weightPerPizza}) teilen.`,
+      'Jede Portion zu einer strammen Kugel schleifen und in eine Luftdichte Box legen. Im Kühlschrank noch einmal 20h reifen lassen.',
+      'Vor dem Ausrollen den Teig 3-4h bei Raumtemperatur akklimatisieren lassen.',
+    ],
+    31,
+    3,
   )
 }
 
