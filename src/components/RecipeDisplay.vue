@@ -6,8 +6,8 @@ const props = defineProps<{
   recipe: Recipe
 }>()
 
-const pizzaSize = ref(props.recipe.basePizzaSize)
-const pizzaCount = ref(props.recipe.basePizzaCount)
+const pizzaSize = ref(props.recipe.diameter)
+const pizzaCount = ref(props.recipe.portions)
 
 const scaledRecipe = computed(() =>
   RecipeScaler.scale(props.recipe, pizzaSize.value, pizzaCount.value),
@@ -69,7 +69,7 @@ const scaledRecipe = computed(() =>
         <h2>Instructions</h2>
         <ol class="instructions-list">
           <li
-            v-for="(instruction, index) in recipe.instructions"
+            v-for="(instruction, index) in scaledRecipe.instructionTexts"
             :key="index"
             class="instruction-item"
           >

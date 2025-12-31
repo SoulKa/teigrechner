@@ -27,10 +27,10 @@ export class Ingredient {
     public readonly density: number = 0,
   ) {}
 
-  static readonly PIZZA_FLOUR_00 = new Ingredient('Pizza flour 00', 0.53)
-  static readonly WATER = new Ingredient('Water', 0.997)
-  static readonly SEA_SALT = new Ingredient('Sea salt', 2.16)
-  static readonly OLIVE_OIL = new Ingredient('Olive oil', 0.915)
+  static readonly PIZZA_FLOUR_00 = new Ingredient('Pizzamehl (Tipo 00)', 0.53)
+  static readonly WATER = new Ingredient('Wasser', 0.997)
+  static readonly FINE_GRAINED_SEA_SALT = new Ingredient('Feines Meersalz', 2.16)
+  static readonly OLIVE_OIL = new Ingredient('Olivenöl', 0.915)
 }
 
 export class Quantity {
@@ -56,6 +56,10 @@ export class Quantity {
       Unit.GRAMS,
     )
   }
+
+  multiply(factor: number): Quantity {
+    return new Quantity(this.amount * factor, this.unit)
+  }
 }
 
 export class IngredientQuantity {
@@ -73,42 +77,60 @@ export class IngredientQuantity {
   }
 }
 
+type Instruction = string | ((recipe: Recipe) => string)
+
 export class Recipe {
   constructor(
     public readonly name: string,
     public readonly description: string,
     public readonly ingredients: IngredientQuantity[],
-    public readonly instructions: string[],
-    public readonly basePizzaSize: number, // in cm diameter
-    public readonly basePizzaCount: number,
+    public readonly instructions: Instruction[],
+    /** Diameter of the pizza in centimeters */
+    public readonly diameter: number,
+    /** Number of pizzas the recipe makes */
+    public readonly portions: number,
   ) {}
 
   get weight(): Quantity {
     return Quantity.sum(this.ingredients.map((iq) => iq.weight))
   }
 
+  get weightPerPizza(): Quantity {
+    return this.weight.multiply(1 / this.portions)
+  }
+
+  get instructionTexts(): string[] {
+    return this.instructions.map((instruction) =>
+      typeof instruction === 'string' ? instruction : instruction(this),
+    )
+  }
+
   static readonly NEW_HAVEN = new Recipe(
     'New Haven-Style',
-    'A classic New Haven-style pizza dough recipe known for its thin, crispy crust and slight chewiness.',
+    'Ein klassischer New Haven-Style Pizzateig, bekannt für seine dünne, knusprige Kruste mit einem leicht knätschigem Biss.',
     [
       new IngredientQuantity(Ingredient.PIZZA_FLOUR_00, new Quantity(500, Unit.GRAMS)),
       new IngredientQuantity(Ingredient.WATER, new Quantity(300, Unit.MILLILITERS)),
-      new IngredientQuantity(Ingredient.SEA_SALT, new Quantity(15, Unit.GRAMS)),
+      new IngredientQuantity(Ingredient.FINE_GRAINED_SEA_SALT, new Quantity(15, Unit.GRAMS)),
       new IngredientQuantity(Ingredient.OLIVE_OIL, new Quantity(15, Unit.GRAMS)),
     ],
     [
-      'In a large mixing bowl, combine the pizza flour and sea salt.',
-      'Gradually add the water while mixing, until a shaggy dough forms.',
-      'Add the olive oil and knead the dough on a floured surface for about 10 minutes, until smooth and elastic.',
-      'Place the dough in a lightly oiled bowl, cover with a damp cloth, and let it rise at room temperature for 1-2 hours, or until doubled in size.',
-      'Preheat your oven to its highest setting (usually around 250°C or 482°F) with a pizza stone or baking sheet inside.',
-      'Divide the dough into portions, shape each into a ball, and let them rest for 15 minutes.',
-      'Roll out each dough ball on a floured surface to your desired thickness.',
-      'Add your favorite toppings and bake on the preheated stone or baking sheet for 7-10 minutes, or until the crust is golden and crispy.',
-      'Remove from the oven, slice, and enjoy your New Haven-style pizza!',
+      'Das Mehl in eine große Schüssel geben.',
+      'Gut die Hälfte des Wassers hinzufügen und mit den Händen unterkneten.',
+      'Nach und nach das restliche Wasser hinzufügen und weiterkneten, bis der Teig nicht mehr klebt.',
+      (recipe) =>
+        `Das Salz (${recipe.ingredients[2]!.quantity}) hinzufügen und weiterkneten, bis es vollständig eingearbeitet ist. Der Teig sollte danach weich und elastisch sein.`,
+      (recipe) =>
+        `Das Olivenöl (${recipe.ingredients[3]!.quantity}) hinzufügen und erneut kneten, bis es vollständig eingearbeitet ist.`,
+      'Den Teig zu einer Kugel formen, auf die Arbeitsfläche legen und mit der Schüssel abdecken.',
+      '10min ruhen lassen.',
+      (recipe) =>
+        `Den Teig in ${recipe.portions} gleich große Portionen (je ca. ${recipe.weightPerPizza}) teilen.`,
+      'Jede Portion zu einer strammen Kugel schleifen und in eine Luftdichte Box legen. Im Kühlschrank 18-24h reifen lassen.',
+      'Vor dem Ausrollen den Teig 3-4h bei Raumtemperatur akklimatisieren lassen.',
     ],
     28, // base pizza size in cm
-    3, // base pizza count
+    4, // base pizza count
   )
 }
 
@@ -117,11 +139,11 @@ export class RecipeScaler {
    * Scales a recipe based on pizza size and count.
    * Scaling factor is based on area (proportional to diameter squared) and count.
    */
-  static scale(recipe: Recipe, targetPizzaSize: number, targetPizzaCount: number): Recipe {
+  static scale(recipe: Recipe, targetDiameter: number, targetPortions: number): Recipe {
     // Calculate area ratio: (targetSize² * targetCount) / (baseSize² * baseCount)
-    const baseArea = Math.PI * Math.pow(recipe.basePizzaSize / 2, 2)
-    const targetArea = Math.PI * Math.pow(targetPizzaSize / 2, 2)
-    const scaleFactor = (targetArea * targetPizzaCount) / (baseArea * recipe.basePizzaCount)
+    const baseArea = Math.PI * Math.pow(recipe.diameter / 2, 2)
+    const targetArea = Math.PI * Math.pow(targetDiameter / 2, 2)
+    const scaleFactor = (targetArea * targetPortions) / (baseArea * recipe.portions)
 
     // Scale all ingredients
     const scaledIngredients = recipe.ingredients.map(
@@ -137,8 +159,8 @@ export class RecipeScaler {
       recipe.description,
       scaledIngredients,
       recipe.instructions,
-      targetPizzaSize,
-      targetPizzaCount,
+      targetDiameter,
+      targetPortions,
     )
   }
 }
