@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
+
+const props = defineProps<{
+  pizzaCount: number
+}>()
 
 interface Snowflake {
   id: number
@@ -71,7 +75,7 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
 
   // Create particles
   const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#00d2d3']
-  const particleCount = 15 + Math.floor(Math.random() * 10) // 15-25 particles
+  const particleCount = 45 + Math.floor(Math.random() * 55) // 45-100 particles
 
   for (let i = 0; i < particleCount; i++) {
     const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5

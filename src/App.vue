@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import RecipeDisplay from './components/RecipeDisplay.vue'
-import PizzaSnow from './components/PizzaSnow.vue'
 import { Recipe } from './data/recipes'
 
 const recipes = [Recipe.NEW_HAVEN, Recipe.NEAPOLITAN] as const
@@ -10,7 +9,6 @@ const selectedRecipe = ref<Recipe>(recipes[0])
 
 <template>
   <div id="app">
-    <PizzaSnow />
     <header class="topbar">
       <div class="brand">Teigrechner</div>
       <label class="recipe-select">

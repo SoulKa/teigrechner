@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { Recipe, RecipeScaler } from '@/data/recipes'
+import PizzaSnow from './PizzaSnow.vue'
 
 const props = defineProps<{
   recipe: Recipe
@@ -26,6 +27,7 @@ watch(
 
 <template>
   <div class="recipe-container">
+    <PizzaSnow :pizza-count="pizzaCount" />
     <div class="recipe-header">
       <h1>{{ recipe.name }}</h1>
       <p class="description">{{ recipe.description }}</p>
