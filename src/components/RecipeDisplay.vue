@@ -8,22 +8,19 @@ const props = defineProps<{
 
 const pizzaSize = ref(props.recipe.diameter)
 const pizzaCount = ref(props.recipe.portions)
-
-// Reset inputs when a different recipe is selected
-watch(
-  () => props.recipe,
-  (newRecipe) => {
-    const previousCount = pizzaCount.value
-    pizzaSize.value = newRecipe.diameter
-    // Keep pizza count aligned to the new recipe's default portions
-    // by snapping to the nearest multiple of the new default based on the prior count.
-    const multiple = Math.max(1, Math.round(previousCount / newRecipe.portions))
-    pizzaCount.value = newRecipe.portions * multiple
-  },
-)
-
 const scaledRecipe = computed(() =>
   RecipeScaler.scale(props.recipe, pizzaSize.value, pizzaCount.value),
+)
+
+// when the recipe changes, try to keep the same amount of flour used by adjusting the pizza count
+watch(
+  () => props.recipe,
+  (newRecipe, oldRecipe) => {
+    const previousFlour = oldRecipe.flour.quantity.amount * (pizzaCount.value / oldRecipe.portions)
+    const newFlourPerPizza = newRecipe.flour.quantity.amount / newRecipe.portions
+    pizzaCount.value = Math.max(1, Math.round(previousFlour / newFlourPerPizza))
+    pizzaSize.value = newRecipe.diameter
+  },
 )
 </script>
 

@@ -114,6 +114,10 @@ export class Recipe {
     )
   }
 
+  get flour(): IngredientQuantity {
+    return this.getIngredient(Ingredient.PIZZA_FLOUR_00)
+  }
+
   getIngredient(ingredient: Ingredient): IngredientQuantity {
     const iq = this.ingredients.find((iq) => iq.ingredient.id === ingredient.id)
     if (iq === undefined) {
