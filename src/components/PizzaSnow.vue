@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps<{
   pizzaCount: number
@@ -28,9 +28,13 @@ interface Particle {
 const snowflakes = ref<Snowflake[]>([])
 const particles = ref<Particle[]>([])
 let nextId = 0
-let intervalId: number | null = null
+let intervalId: number | undefined
 
 const createSnowflake = () => {
+  if (snowflakes.value.length >= props.pizzaCount * 8) {
+    return
+  }
+
   const snowflake: Snowflake = {
     id: nextId++,
     left: Math.random() * 100,
@@ -57,9 +61,8 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (intervalId !== null) {
-    clearInterval(intervalId)
-  }
+  clearInterval(intervalId)
+  intervalId = undefined
 })
 
 const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
@@ -141,6 +144,7 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
   height: 100%;
   overflow: hidden;
   z-index: 9999;
+  pointer-events: none;
 }
 
 .pizza {
@@ -149,6 +153,7 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
   animation: fall linear forwards;
   user-select: none;
   cursor: pointer;
+  pointer-events: auto;
   transition: filter 0.1s;
 }
 
