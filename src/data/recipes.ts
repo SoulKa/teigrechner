@@ -188,6 +188,26 @@ export class Recipe {
     31,
     3,
   )
+
+  static readonly FLAMMKUCHEN = new Recipe(
+    'Flammkuchen',
+    'Ein elsässischer Klassiker: dünner, knuspriger Teig ohne Hefe – schnell gemacht und perfekt für Crème fraîche, Speck und Zwiebeln.',
+    [
+      new IngredientQuantity(Ingredient.PIZZA_FLOUR_00, new Quantity(250, Unit.GRAMS)),
+      new IngredientQuantity(Ingredient.WATER, new Quantity(120, Unit.GRAMS)),
+      new IngredientQuantity(Ingredient.OLIVE_OIL, new Quantity(30, Unit.GRAMS)),
+      new IngredientQuantity(Ingredient.FINE_GRAINED_SEA_SALT, new Quantity(0.25, Unit.TEASPOON)),
+    ],
+    [
+      'Alle Zutaten in eine Schüssel geben.',
+      'Kneten, bis ein glatter, geschmeidiger Teig entsteht.',
+      'Den Teig in Frischhaltefolie wickeln und 30 Minuten im Kühlschrank ruhen lassen.',
+      (recipe) =>
+        `Den Teig in ${recipe.portions} gleich große Portionen (je ca. ${recipe.weightPerPizza}) teilen und auf einer bemehlten Arbeitsfläche sehr dünn ausrollen.`,
+    ],
+    28,
+    2,
+  )
 }
 
 export class RecipeScaler {

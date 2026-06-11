@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import RecipeDisplay from './components/RecipeDisplay.vue'
 import { Recipe } from './data/recipes'
 
-const recipes = [Recipe.NEW_HAVEN, Recipe.NEAPOLITAN] as const
+const recipes = [Recipe.NEW_HAVEN, Recipe.NEAPOLITAN, Recipe.FLAMMKUCHEN] as const
 const selectedRecipe = ref<Recipe>(recipes[0])
 </script>
 
