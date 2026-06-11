@@ -7,6 +7,7 @@ const props = defineProps<{
   recipe: Recipe
 }>()
 
+const selectedOven = ref<'kitchen' | 'pizza'>('kitchen')
 const pizzaSize = ref(props.recipe.diameter)
 const pizzaCount = ref(props.recipe.portions)
 const scaledRecipe = computed(() =>
@@ -88,6 +89,44 @@ watch(
         </ol>
       </section>
     </div>
+
+    <section v-if="recipe.bakingInfo" class="baking-section">
+      <h2>Backen</h2>
+      <div class="oven-toggle">
+        <button :class="{ active: selectedOven === 'kitchen' }" @click="selectedOven = 'kitchen'">
+          Haushaltsofen
+        </button>
+        <button :class="{ active: selectedOven === 'pizza' }" @click="selectedOven = 'pizza'">
+          Pizzaofen
+        </button>
+      </div>
+
+      <div v-if="selectedOven === 'kitchen'" class="baking-details">
+        <div class="baking-row">
+          <span class="baking-label">Temperatur</span>
+          <span class="baking-value">{{ recipe.bakingInfo.kitchenOven.temperatureCelsius }} °C</span>
+        </div>
+        <div class="baking-row">
+          <span class="baking-label">Zeit</span>
+          <span class="baking-value">{{ recipe.bakingInfo.kitchenOven.timeMinutes.min }}–{{ recipe.bakingInfo.kitchenOven.timeMinutes.max }} min</span>
+        </div>
+      </div>
+
+      <div v-else class="baking-details">
+        <div class="baking-row">
+          <span class="baking-label">Oben</span>
+          <span class="baking-value">{{ recipe.bakingInfo.pizzaOven.topTemperatureCelsius }} °C</span>
+        </div>
+        <div class="baking-row">
+          <span class="baking-label">Unten</span>
+          <span class="baking-value">{{ recipe.bakingInfo.pizzaOven.bottomTemperatureCelsius }} °C</span>
+        </div>
+        <div class="baking-row">
+          <span class="baking-label">Zeit</span>
+          <span class="baking-value">{{ recipe.bakingInfo.pizzaOven.timeMinutes.min }}–{{ recipe.bakingInfo.pizzaOven.timeMinutes.max }} min</span>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -237,6 +276,63 @@ h2 {
 
 .instruction-item:last-child {
   margin-bottom: 0;
+}
+
+.baking-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e5e7eb;
+}
+
+.oven-toggle {
+  display: inline-flex;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.oven-toggle button {
+  padding: 0.4rem 1rem;
+  border: none;
+  background: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4b5563;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.oven-toggle button:not(:last-child) {
+  border-right: 2px solid #e5e7eb;
+}
+
+.oven-toggle button.active {
+  background: #d97706;
+  color: #fff;
+}
+
+.baking-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.baking-row {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.baking-label {
+  font-weight: 600;
+  color: #4b5563;
+  min-width: 100px;
+}
+
+.baking-value {
+  font-weight: 600;
+  color: #d97706;
 }
 
 @media (max-width: 768px) {

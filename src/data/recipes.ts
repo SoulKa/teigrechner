@@ -88,6 +88,27 @@ export class IngredientQuantity {
 
 type Instruction = string | ((recipe: Recipe) => string)
 
+interface TimeRange {
+  min: number
+  max: number
+}
+
+interface OvenConfig {
+  temperatureCelsius: number
+  timeMinutes: TimeRange
+}
+
+interface PizzaOvenConfig {
+  topTemperatureCelsius: number
+  bottomTemperatureCelsius: number
+  timeMinutes: TimeRange
+}
+
+export interface BakingInfo {
+  kitchenOven: OvenConfig
+  pizzaOven: PizzaOvenConfig
+}
+
 export class Recipe {
   constructor(
     public readonly name: string,
@@ -98,6 +119,7 @@ export class Recipe {
     public readonly diameter: number,
     /** Number of pizzas the recipe makes */
     public readonly portions: number,
+    public readonly bakingInfo?: BakingInfo,
   ) {}
 
   get weight(): Quantity {
@@ -157,6 +179,14 @@ export class Recipe {
     ],
     28,
     4,
+    {
+      kitchenOven: { temperatureCelsius: 250, timeMinutes: { min: 8, max: 12 } },
+      pizzaOven: {
+        topTemperatureCelsius: 420,
+        bottomTemperatureCelsius: 370,
+        timeMinutes: { min: 3, max: 5 },
+      },
+    },
   )
 
   static readonly NEAPOLITAN = new Recipe(
@@ -187,11 +217,19 @@ export class Recipe {
     ],
     31,
     3,
+    {
+      kitchenOven: { temperatureCelsius: 250, timeMinutes: { min: 8, max: 10 } },
+      pizzaOven: {
+        topTemperatureCelsius: 450,
+        bottomTemperatureCelsius: 400,
+        timeMinutes: { min: 1, max: 2 },
+      },
+    },
   )
 
   static readonly FLAMMKUCHEN = new Recipe(
     'Flammkuchen',
-    'Ein elsässischer Klassiker: dünner, knuspriger Teig ohne Hefe – schnell gemacht und perfekt für Crème fraîche, Speck und Zwiebeln.',
+    'Ein elsässischer Klassiker: dünner, knuspriger Teig ohne Hefe - schnell gemacht und perfekt für Crème fraîche, Speck und Zwiebeln.',
     [
       new IngredientQuantity(Ingredient.PIZZA_FLOUR_00, new Quantity(250, Unit.GRAMS)),
       new IngredientQuantity(Ingredient.WATER, new Quantity(120, Unit.GRAMS)),
@@ -207,6 +245,14 @@ export class Recipe {
     ],
     28,
     2,
+    {
+      kitchenOven: { temperatureCelsius: 250, timeMinutes: { min: 20, max: 25 } },
+      pizzaOven: {
+        topTemperatureCelsius: 350,
+        bottomTemperatureCelsius: 300,
+        timeMinutes: { min: 4, max: 6 },
+      },
+    },
   )
 }
 
@@ -228,6 +274,7 @@ export class RecipeScaler {
       recipe.instructions,
       targetDiameter,
       targetPortions,
+      recipe.bakingInfo,
     )
   }
 }
