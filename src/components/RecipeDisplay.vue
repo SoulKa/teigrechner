@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { Recipe, RecipeScaler, OvenType } from '@/data/recipes'
-import PizzaSnow from './PizzaSnow.vue'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 
 const props = defineProps<{
@@ -14,8 +13,6 @@ const pizzaCount = useLocalStorage('pizza-count', props.recipe.portions)
 const scaledRecipe = computed(() =>
   RecipeScaler.scale(props.recipe, pizzaSize.value, pizzaCount.value),
 )
-const snowEmoji = computed(() => (props.recipe === Recipe.FLAMMKUCHEN ? '🧅' : '🍕'))
-
 // when the recipe changes, try to keep the same amount of flour used by adjusting the pizza count
 watch(
   () => props.recipe,
@@ -30,7 +27,7 @@ watch(
 
 <template>
   <div class="recipe-container">
-    <PizzaSnow :pizza-count="pizzaCount" :emoji="snowEmoji" />
+
     <div class="recipe-header">
       <h1>{{ recipe.name }}</h1>
       <p class="description">{{ recipe.description }}</p>

@@ -4,6 +4,7 @@ import { ref, watch, onMounted, onUnmounted } from 'vue'
 const props = defineProps<{
   pizzaCount: number
   emoji?: string
+  enabled?: boolean
 }>()
 
 interface Snowflake {
@@ -34,6 +35,7 @@ let nextId = 0
 let intervalId: number | undefined
 
 const createSnowflake = () => {
+  if (props.enabled === false) return
   if (snowflakes.value.length >= props.pizzaCount * 8) {
     return
   }
