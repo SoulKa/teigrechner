@@ -286,30 +286,38 @@ h2 {
 
 .oven-toggle {
   display: inline-flex;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.375rem;
-  overflow: hidden;
   margin-bottom: 1.5rem;
 }
 
 .oven-toggle button {
-  padding: 0.4rem 1rem;
-  border: none;
+  padding: 0.4rem 0.875rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0;
   background: none;
   font-size: 0.9rem;
   font-weight: 600;
   color: #4b5563;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
-.oven-toggle button:not(:last-child) {
-  border-right: 2px solid #e5e7eb;
+.oven-toggle button:not(:first-child) {
+  margin-left: -2px;
+}
+
+.oven-toggle button:first-child {
+  border-radius: 0.375rem 0 0 0.375rem;
+}
+
+.oven-toggle button:last-child {
+  border-radius: 0 0.375rem 0.375rem 0;
 }
 
 .oven-toggle button.active {
   background: #d97706;
+  border-color: #d97706;
   color: #fff;
+  z-index: 1;
 }
 
 .baking-details {
