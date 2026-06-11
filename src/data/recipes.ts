@@ -13,10 +13,10 @@ export class Unit {
     public readonly toBaseFactor: number,
   ) {}
 
-  static readonly GRAMS = new Unit('g', 'grams', UnitKind.MASS, 1)
-  static readonly MILLILITERS = new Unit('ml', 'milliliters', UnitKind.VOLUME, 1)
-  static readonly TEASPOON = new Unit('tsp', 'teaspoon', UnitKind.VOLUME, 5)
-  static readonly TABLESPOON = new Unit('tbsp', 'tablespoon', UnitKind.VOLUME, 15)
+  static readonly GRAMS = new Unit('g', 'Gramm', UnitKind.MASS, 1)
+  static readonly MILLILITERS = new Unit('ml', 'Milliliter', UnitKind.VOLUME, 1)
+  static readonly TEASPOON = new Unit('TL', 'Teelöffel', UnitKind.VOLUME, 5)
+  static readonly TABLESPOON = new Unit('EL', 'Esslöffel', UnitKind.VOLUME, 15)
 }
 
 export class Ingredient {

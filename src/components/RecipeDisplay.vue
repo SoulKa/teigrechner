@@ -34,7 +34,7 @@ watch(
 
       <div class="recipe-controls">
         <div class="control-group">
-          <label for="pizza-size">Pizza Size (cm)</label>
+          <label for="pizza-size">Pizza Größe (cm)</label>
           <input
             id="pizza-size"
             type="number"
@@ -45,7 +45,7 @@ watch(
           />
         </div>
         <div class="control-group">
-          <label for="pizza-count">Number of Pizzas</label>
+          <label for="pizza-count">Anzahl Pizzen</label>
           <input
             id="pizza-count"
             type="number"
@@ -60,7 +60,7 @@ watch(
 
     <div class="recipe-content">
       <section class="ingredients-section">
-        <h2>Ingredients</h2>
+        <h2>Zutaten</h2>
         <ul class="ingredients-list">
           <li
             v-for="(entry, index) in scaledRecipe.ingredients"
@@ -76,7 +76,7 @@ watch(
       </section>
 
       <section class="instructions-section">
-        <h2>Instructions</h2>
+        <h2>Zubereitung</h2>
         <ol class="instructions-list">
           <li
             v-for="(instruction, index) in scaledRecipe.instructionTexts"
