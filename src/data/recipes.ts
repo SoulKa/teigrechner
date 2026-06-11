@@ -1,3 +1,8 @@
+export enum OvenType {
+  KITCHEN = 'kitchen',
+  PIZZA = 'pizza',
+}
+
 export enum UnitKind {
   MASS = 'mass',
   VOLUME = 'volume',

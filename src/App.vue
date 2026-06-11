@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
 import RecipeDisplay from './components/RecipeDisplay.vue'
 import { Recipe } from './data/recipes'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 
 const recipes = [Recipe.NEW_HAVEN, Recipe.NEAPOLITAN, Recipe.FLAMMKUCHEN] as const
-const selectedRecipe = ref<Recipe>(recipes[0])
+const storedRecipeName = useLocalStorage('recipe', recipes[0].name)
+const selectedRecipe = computed({
+  get: () => recipes.find((r) => r.name === storedRecipeName.value) ?? recipes[0],
+  set: (r: Recipe) => { storedRecipeName.value = r.name },
+})
 </script>
 
 <template>

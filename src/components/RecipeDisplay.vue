@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { Recipe, RecipeScaler } from '@/data/recipes'
+import { computed, watch } from 'vue'
+import { Recipe, RecipeScaler, OvenType } from '@/data/recipes'
 import PizzaSnow from './PizzaSnow.vue'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 
 const props = defineProps<{
   recipe: Recipe
 }>()
 
-const selectedOven = ref<'kitchen' | 'pizza'>('kitchen')
-const pizzaSize = ref(props.recipe.diameter)
-const pizzaCount = ref(props.recipe.portions)
+const selectedOven = useLocalStorage<OvenType>('oven', OvenType.KITCHEN)
+const pizzaSize = useLocalStorage('pizza-size', props.recipe.diameter)
+const pizzaCount = useLocalStorage('pizza-count', props.recipe.portions)
 const scaledRecipe = computed(() =>
   RecipeScaler.scale(props.recipe, pizzaSize.value, pizzaCount.value),
 )
@@ -93,15 +94,15 @@ watch(
     <section v-if="recipe.bakingInfo" class="baking-section">
       <h2>Backen</h2>
       <div class="oven-toggle">
-        <button :class="{ active: selectedOven === 'kitchen' }" @click="selectedOven = 'kitchen'">
+        <button :class="{ active: selectedOven === OvenType.KITCHEN }" @click="selectedOven = OvenType.KITCHEN">
           Haushaltsofen
         </button>
-        <button :class="{ active: selectedOven === 'pizza' }" @click="selectedOven = 'pizza'">
+        <button :class="{ active: selectedOven === OvenType.PIZZA }" @click="selectedOven = OvenType.PIZZA">
           Pizzaofen
         </button>
       </div>
 
-      <div v-if="selectedOven === 'kitchen'" class="baking-details">
+      <div v-if="selectedOven === OvenType.KITCHEN" class="baking-details">
         <div class="baking-row">
           <span class="baking-label">Temperatur</span>
           <span class="baking-value">{{ recipe.bakingInfo.kitchenOven.temperatureCelsius }} °C</span>
