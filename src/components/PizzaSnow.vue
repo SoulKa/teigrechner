@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps<{
   pizzaCount: number
+  emoji?: string
+  enabled?: boolean
 }>()
 
 interface Snowflake {
@@ -13,6 +15,8 @@ interface Snowflake {
   fontSize: number
   opacity: number
   rotation: number
+  emoji: string
+  flipping: boolean
 }
 
 interface Particle {
@@ -31,6 +35,7 @@ let nextId = 0
 let intervalId: number | undefined
 
 const createSnowflake = () => {
+  if (props.enabled === false) return
   if (snowflakes.value.length >= props.pizzaCount * 8) {
     return
   }
@@ -43,6 +48,8 @@ const createSnowflake = () => {
     fontSize: 20 + Math.random() * 30, // 20-50px
     opacity: 0.6 + Math.random() * 0.4, // 0.6-1.0
     rotation: Math.random() * 360,
+    emoji: props.emoji ?? '🍕',
+    flipping: false,
   }
   snowflakes.value.push(snowflake)
 
@@ -54,6 +61,21 @@ const createSnowflake = () => {
     }
   }, snowflake.animationDuration * 1000)
 }
+
+const FLIP_DURATION = 400
+
+watch(
+  () => props.emoji,
+  (newEmoji) => {
+    snowflakes.value.forEach((s) => { s.flipping = true })
+    setTimeout(() => {
+      snowflakes.value.forEach((s) => { s.emoji = newEmoji ?? '🍕' })
+    }, FLIP_DURATION / 2)
+    setTimeout(() => {
+      snowflakes.value.forEach((s) => { s.flipping = false })
+    }, FLIP_DURATION)
+  },
+)
 
 onMounted(() => {
   // Create snowflakes every 300ms
@@ -116,7 +138,7 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
       }"
       @click="(e) => explodePizza(e, snowflake)"
     >
-      🍕
+      <span class="emoji" :class="{ flipping: snowflake.flipping }">{{ snowflake.emoji }}</span>
     </div>
     <div
       v-for="particle in particles"
@@ -161,6 +183,21 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
   filter: brightness(1.2);
 }
 
+.emoji {
+  display: inline-block;
+}
+
+.emoji.flipping {
+  animation: emoji-flip v-bind('FLIP_DURATION + "ms"') linear forwards;
+}
+
+@keyframes emoji-flip {
+  0%   { transform: scaleX(1); }
+  40%  { transform: scaleX(0); }
+  60%  { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+
 .particle {
   position: fixed;
   border-radius: 50%;
@@ -185,21 +222,6 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
         calc(sin(var(--angle)) * var(--distance))
       )
       scale(0);
-    opacity: 0;
-  }
-}
-
-@keyframes explode {
-  0% {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(2) rotate(180deg);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(3) rotate(360deg);
     opacity: 0;
   }
 }

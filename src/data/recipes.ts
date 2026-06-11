@@ -1,3 +1,8 @@
+export enum OvenType {
+  KITCHEN = 'kitchen',
+  PIZZA = 'pizza',
+}
+
 export enum UnitKind {
   MASS = 'mass',
   VOLUME = 'volume',
@@ -13,10 +18,10 @@ export class Unit {
     public readonly toBaseFactor: number,
   ) {}
 
-  static readonly GRAMS = new Unit('g', 'grams', UnitKind.MASS, 1)
-  static readonly MILLILITERS = new Unit('ml', 'milliliters', UnitKind.VOLUME, 1)
-  static readonly TEASPOON = new Unit('tsp', 'teaspoon', UnitKind.VOLUME, 5)
-  static readonly TABLESPOON = new Unit('tbsp', 'tablespoon', UnitKind.VOLUME, 15)
+  static readonly GRAMS = new Unit('g', 'Gramm', UnitKind.MASS, 1)
+  static readonly MILLILITERS = new Unit('ml', 'Milliliter', UnitKind.VOLUME, 1)
+  static readonly TEASPOON = new Unit('TL', 'Teelöffel', UnitKind.VOLUME, 5)
+  static readonly TABLESPOON = new Unit('EL', 'Esslöffel', UnitKind.VOLUME, 15)
 }
 
 export class Ingredient {
@@ -88,6 +93,27 @@ export class IngredientQuantity {
 
 type Instruction = string | ((recipe: Recipe) => string)
 
+interface TimeRange {
+  min: number
+  max: number
+}
+
+interface OvenConfig {
+  temperatureCelsius: number
+  timeMinutes: TimeRange
+}
+
+interface PizzaOvenConfig {
+  topTemperatureCelsius: number
+  bottomTemperatureCelsius: number
+  timeMinutes: TimeRange
+}
+
+export interface BakingInfo {
+  kitchenOven: OvenConfig
+  pizzaOven: PizzaOvenConfig
+}
+
 export class Recipe {
   constructor(
     public readonly name: string,
@@ -98,6 +124,7 @@ export class Recipe {
     public readonly diameter: number,
     /** Number of pizzas the recipe makes */
     public readonly portions: number,
+    public readonly bakingInfo?: BakingInfo,
   ) {}
 
   get weight(): Quantity {
@@ -157,6 +184,14 @@ export class Recipe {
     ],
     28,
     4,
+    {
+      kitchenOven: { temperatureCelsius: 250, timeMinutes: { min: 8, max: 12 } },
+      pizzaOven: {
+        topTemperatureCelsius: 420,
+        bottomTemperatureCelsius: 370,
+        timeMinutes: { min: 3, max: 5 },
+      },
+    },
   )
 
   static readonly NEAPOLITAN = new Recipe(
@@ -187,6 +222,42 @@ export class Recipe {
     ],
     31,
     3,
+    {
+      kitchenOven: { temperatureCelsius: 250, timeMinutes: { min: 8, max: 10 } },
+      pizzaOven: {
+        topTemperatureCelsius: 450,
+        bottomTemperatureCelsius: 400,
+        timeMinutes: { min: 1, max: 2 },
+      },
+    },
+  )
+
+  static readonly FLAMMKUCHEN = new Recipe(
+    'Flammkuchen',
+    'Ein elsässischer Klassiker: dünner, knuspriger Teig ohne Hefe - schnell gemacht und perfekt für Crème fraîche, Speck und Zwiebeln.',
+    [
+      new IngredientQuantity(Ingredient.PIZZA_FLOUR_00, new Quantity(250, Unit.GRAMS)),
+      new IngredientQuantity(Ingredient.WATER, new Quantity(120, Unit.GRAMS)),
+      new IngredientQuantity(Ingredient.OLIVE_OIL, new Quantity(30, Unit.GRAMS)),
+      new IngredientQuantity(Ingredient.FINE_GRAINED_SEA_SALT, new Quantity(0.25, Unit.TEASPOON)),
+    ],
+    [
+      'Alle Zutaten in eine Schüssel geben.',
+      'Kneten, bis ein glatter, geschmeidiger Teig entsteht.',
+      'Den Teig in Frischhaltefolie wickeln und 30 Minuten im Kühlschrank ruhen lassen.',
+      (recipe) =>
+        `Den Teig in ${recipe.portions} gleich große Portionen (je ca. ${recipe.weightPerPizza}) teilen und auf einer bemehlten Arbeitsfläche sehr dünn ausrollen.`,
+    ],
+    28,
+    2,
+    {
+      kitchenOven: { temperatureCelsius: 250, timeMinutes: { min: 20, max: 25 } },
+      pizzaOven: {
+        topTemperatureCelsius: 350,
+        bottomTemperatureCelsius: 300,
+        timeMinutes: { min: 4, max: 6 },
+      },
+    },
   )
 }
 
@@ -208,6 +279,7 @@ export class RecipeScaler {
       recipe.instructions,
       targetDiameter,
       targetPortions,
+      recipe.bakingInfo,
     )
   }
 }

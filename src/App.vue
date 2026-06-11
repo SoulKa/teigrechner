@@ -1,24 +1,47 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
 import RecipeDisplay from './components/RecipeDisplay.vue'
+import PizzaSnow from './components/PizzaSnow.vue'
 import { Recipe } from './data/recipes'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 
-const recipes = [Recipe.NEW_HAVEN, Recipe.NEAPOLITAN] as const
-const selectedRecipe = ref<Recipe>(recipes[0])
+const recipes = [Recipe.NEW_HAVEN, Recipe.NEAPOLITAN, Recipe.FLAMMKUCHEN] as const
+const storedRecipeName = useLocalStorage('recipe', recipes[0].name)
+const selectedRecipe = computed({
+  get: () => recipes.find((r) => r.name === storedRecipeName.value) ?? recipes[0],
+  set: (r: Recipe) => { storedRecipeName.value = r.name },
+})
+
+const snowEnabled = useLocalStorage('snow-enabled', true)
+const snowEmoji = computed(() => selectedRecipe.value === Recipe.FLAMMKUCHEN ? '🧅' : '🍕')
 </script>
 
 <template>
   <div id="app">
+    <PizzaSnow
+      :pizza-count="selectedRecipe.portions"
+      :emoji="snowEmoji"
+      :enabled="snowEnabled"
+    />
+
     <header class="topbar">
       <div class="brand">Teigrechner</div>
-      <label class="recipe-select">
-        <span>Rezept wählen</span>
-        <select v-model="selectedRecipe">
-          <option v-for="recipe in recipes" :key="recipe.name" :value="recipe">
-            {{ recipe.name }}
-          </option>
-        </select>
-      </label>
+      <div class="topbar-actions">
+        <button
+          class="snow-toggle"
+          :class="{ active: snowEnabled }"
+          :title="snowEnabled ? 'Schnee ausschalten' : 'Schnee einschalten'"
+          @click="snowEnabled = !snowEnabled"
+        >❄️</button>
+        <label class="recipe-select">
+          <span>Rezept wählen</span>
+          <select v-model="selectedRecipe">
+            <option v-for="recipe in recipes" :key="recipe.name" :value="recipe">
+              {{ recipe.name }}
+            </option>
+          </select>
+        </label>
+      </div>
     </header>
 
     <main class="content">
@@ -56,6 +79,28 @@ body {
 .brand {
   font-weight: 700;
   letter-spacing: 0.02em;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.snow-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  opacity: 0.35;
+  transition: opacity 0.2s;
+  line-height: 1;
+}
+
+.snow-toggle.active {
+  opacity: 1;
 }
 
 .recipe-select {
