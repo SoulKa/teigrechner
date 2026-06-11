@@ -14,6 +14,7 @@ const pizzaCount = useLocalStorage('pizza-count', props.recipe.portions)
 const scaledRecipe = computed(() =>
   RecipeScaler.scale(props.recipe, pizzaSize.value, pizzaCount.value),
 )
+const snowEmoji = computed(() => (props.recipe === Recipe.FLAMMKUCHEN ? '🧅' : '🍕'))
 
 // when the recipe changes, try to keep the same amount of flour used by adjusting the pizza count
 watch(
@@ -29,7 +30,7 @@ watch(
 
 <template>
   <div class="recipe-container">
-    <PizzaSnow :pizza-count="pizzaCount" />
+    <PizzaSnow :pizza-count="pizzaCount" :emoji="snowEmoji" />
     <div class="recipe-header">
       <h1>{{ recipe.name }}</h1>
       <p class="description">{{ recipe.description }}</p>
