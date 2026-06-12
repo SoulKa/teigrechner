@@ -32,6 +32,7 @@ interface Particle {
   emoji?: string
   spin?: number
   initialRotation?: number
+  duration?: number
 }
 
 const snowflakes = ref<Snowflake[]>([])
@@ -138,18 +139,19 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
         x,
         y,
         angle,
-        distance: 90 + Math.random() * 60,
+        distance: 80 + Math.random() * 100,
         size: 28,
         color: '',
         emoji: '🍕',
         initialRotation: i * 60,
-        spin: 0,
+        spin: (Math.random() - 0.5) * 540,
+        duration: 0.7 + Math.random() * 0.8,
       })
     }
     setTimeout(() => {
       const cutoff = nextId - sliceCount
       particles.value = particles.value.filter((p) => p.id >= cutoff)
-    }, 1000)
+    }, 1500)
   }
 }
 </script>
@@ -212,6 +214,7 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
           '--distance': `${particle.distance}px`,
           '--spin': `${particle.spin ?? 0}deg`,
           '--initial-rotation': `${particle.initialRotation ?? 0}deg`,
+          '--duration': particle.duration ? `${particle.duration}s` : '1s',
         }"
         >{{ particle.emoji }}</span
       >
@@ -309,7 +312,7 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
   position: fixed;
   pointer-events: none;
   line-height: 1;
-  animation: burst-emoji 1s ease-out forwards;
+  animation: burst-emoji var(--duration, 1s) ease-out forwards;
 }
 
 @keyframes burst-emoji {
