@@ -6,7 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/teigrechner/',
+  base: process.env.VITE_BASE_URL ?? '/teigrechner/',
   plugins: [vue(), vueDevTools()],
   resolve: {
     alias: {

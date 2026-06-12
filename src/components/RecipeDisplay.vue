@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { Recipe, RecipeScaler, OvenType } from '@/data/recipes'
-import { useLocalStorage } from '@/composables/useLocalStorage'
+import { useQueryParam } from '@/composables/useUrlState'
 
 const props = defineProps<{
   recipe: Recipe
 }>()
 
-const selectedOven = useLocalStorage<OvenType>('oven', OvenType.KITCHEN)
-const pizzaSize = useLocalStorage('pizza-size', props.recipe.diameter)
-const pizzaCount = useLocalStorage('pizza-count', props.recipe.portions)
+const selectedOven = useQueryParam<OvenType>('oven', OvenType.KITCHEN)
+const pizzaSize = useQueryParam('size', props.recipe.diameter)
+const pizzaCount = useQueryParam('count', props.recipe.portions)
 const scaledRecipe = computed(() =>
   RecipeScaler.scale(props.recipe, pizzaSize.value, pizzaCount.value),
 )
