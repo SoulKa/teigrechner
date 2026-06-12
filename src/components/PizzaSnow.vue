@@ -29,7 +29,9 @@ interface Particle {
   size: number
   color: string
   image?: string
+  emoji?: string
   spin?: number
+  initialRotation?: number
 }
 
 const snowflakes = ref<Snowflake[]>([])
@@ -70,12 +72,18 @@ const FLIP_DURATION = 400
 watch(
   () => props.emoji,
   (newEmoji) => {
-    snowflakes.value.forEach((s) => { s.flipping = true })
+    snowflakes.value.forEach((s) => {
+      s.flipping = true
+    })
     setTimeout(() => {
-      snowflakes.value.forEach((s) => { s.emoji = newEmoji ?? '🍕' })
+      snowflakes.value.forEach((s) => {
+        s.emoji = newEmoji ?? '🍕'
+      })
     }, FLIP_DURATION / 2)
     setTimeout(() => {
-      snowflakes.value.forEach((s) => { s.flipping = false })
+      snowflakes.value.forEach((s) => {
+        s.flipping = false
+      })
     }, FLIP_DURATION)
   },
 )
@@ -107,7 +115,9 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
       const angle = (Math.PI * 2 * i) / sliceCount + (Math.random() - 0.5) * 0.3
       particles.value.push({
         id: nextId++,
-        x, y, angle,
+        x,
+        y,
+        angle,
         distance: 100 + Math.random() * 80,
         size: 20 + Math.random() * 16, // 20-36px
         color: '',
@@ -120,22 +130,26 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
       particles.value = particles.value.filter((p) => p.id >= cutoff || p.image !== onionSlice)
     }, 1000)
   } else {
-    const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#00d2d3']
-    const particleCount = 45 + Math.floor(Math.random() * 55) // 45-100 particles
-    for (let i = 0; i < particleCount; i++) {
-      const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5
+    const sliceCount = 6
+    for (let i = 0; i < sliceCount; i++) {
+      const angle = (i * 60 - 90) * (Math.PI / 180)
       particles.value.push({
         id: nextId++,
-        x, y, angle,
-        distance: 80 + Math.random() * 60,
-        size: 4 + Math.random() * 6,
-        color: colors[Math.floor(Math.random() * colors.length)]!,
+        x,
+        y,
+        angle,
+        distance: 90 + Math.random() * 60,
+        size: 28,
+        color: '',
+        emoji: '🍕',
+        initialRotation: i * 60,
+        spin: 0,
       })
     }
     setTimeout(() => {
-      const cutoff = nextId - particleCount
+      const cutoff = nextId - sliceCount
       particles.value = particles.value.filter((p) => p.id >= cutoff)
-    }, 800)
+    }, 1000)
   }
 }
 </script>
@@ -155,7 +169,22 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
       }"
       @click="(e) => explodePizza(e, snowflake)"
     >
-      <span class="emoji" :class="{ flipping: snowflake.flipping }">{{ snowflake.emoji }}</span>
+      <div
+        v-if="snowflake.emoji === '🍕'"
+        class="emoji pizza-wheel"
+        :class="{ flipping: snowflake.flipping }"
+      >
+        <span
+          v-for="i in 6"
+          :key="i"
+          class="pizza-slice"
+          :style="{ transform: `rotate(${(i - 1) * 60}deg)` }"
+          >🍕</span
+        >
+      </div>
+      <span v-else class="emoji" :class="{ flipping: snowflake.flipping }">{{
+        snowflake.emoji
+      }}</span>
     </div>
     <template v-for="particle in particles" :key="particle.id">
       <img
@@ -172,6 +201,20 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
           '--spin': `${particle.spin ?? 0}deg`,
         }"
       />
+      <span
+        v-else-if="particle.emoji"
+        class="particle particle-emoji"
+        :style="{
+          left: `${particle.x}px`,
+          top: `${particle.y}px`,
+          fontSize: `${particle.size}px`,
+          '--angle': `${particle.angle}rad`,
+          '--distance': `${particle.distance}px`,
+          '--spin': `${particle.spin ?? 0}deg`,
+          '--initial-rotation': `${particle.initialRotation ?? 0}deg`,
+        }"
+        >{{ particle.emoji }}</span
+      >
       <div
         v-else
         class="particle"
@@ -219,15 +262,34 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
   display: inline-block;
 }
 
+.pizza-wheel {
+  display: inline-grid;
+}
+
+.pizza-slice {
+  grid-area: 1 / 1;
+  display: inline-block;
+  transform-origin: 70% 80%;
+  font-size: 0.6em;
+}
+
 .emoji.flipping {
   animation: emoji-flip v-bind('FLIP_DURATION + "ms"') linear forwards;
 }
 
 @keyframes emoji-flip {
-  0%   { transform: scaleX(1); }
-  40%  { transform: scaleX(0); }
-  60%  { transform: scaleX(0); }
-  100% { transform: scaleX(1); }
+  0% {
+    transform: scaleX(1);
+  }
+  40% {
+    transform: scaleX(0);
+  }
+  60% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
 }
 
 .particle {
@@ -241,6 +303,28 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
   border-radius: 0;
   background: none;
   animation: burst-image 1s ease-out forwards;
+}
+
+.particle-emoji {
+  position: fixed;
+  pointer-events: none;
+  line-height: 1;
+  animation: burst-emoji 1s ease-out forwards;
+}
+
+@keyframes burst-emoji {
+  0% {
+    transform: translate(0, 0) rotate(var(--initial-rotation));
+    opacity: 1;
+  }
+  100% {
+    transform: translate(
+        calc(cos(var(--angle)) * var(--distance)),
+        calc(sin(var(--angle)) * var(--distance))
+      )
+      rotate(calc(var(--initial-rotation) + var(--spin)));
+    opacity: 0;
+  }
 }
 
 @keyframes burst-image {
