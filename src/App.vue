@@ -1,18 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import RecipeDisplay from './components/RecipeDisplay.vue'
 import PizzaSnow from './components/PizzaSnow.vue'
 import { Recipe } from './data/recipes'
-import { useLocalStorage } from '@/composables/useLocalStorage'
+import { usePathRecipe } from '@/composables/useUrlState'
 
 const recipes = [Recipe.NEW_HAVEN, Recipe.NEAPOLITAN, Recipe.FLAMMKUCHEN] as const
-const storedRecipeName = useLocalStorage('recipe', recipes[0].name)
-const selectedRecipe = computed({
-  get: () => recipes.find((r) => r.name === storedRecipeName.value) ?? recipes[0],
-  set: (r: Recipe) => { storedRecipeName.value = r.name },
-})
+const selectedRecipe = usePathRecipe(recipes)
 
-const snowEnabled = useLocalStorage('snow-enabled', true)
+const snowEnabled = ref(true)
 const snowEmoji = computed(() => selectedRecipe.value === Recipe.FLAMMKUCHEN ? '🧅' : '🍕')
 </script>
 

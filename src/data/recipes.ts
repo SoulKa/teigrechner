@@ -127,6 +127,10 @@ export class Recipe {
     public readonly bakingInfo?: BakingInfo,
   ) {}
 
+  get slug(): string {
+    return this.name.toLowerCase().replace(/\s+/g, '-')
+  }
+
   get weight(): Quantity {
     return Quantity.sum(...this.ingredients.map((iq) => iq.weight))
   }
