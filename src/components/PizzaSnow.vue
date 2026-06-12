@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue'
+import onionSlice from '@/image/onion-slice.png'
 
 const props = defineProps<{
   pizzaCount: number
@@ -27,6 +28,8 @@ interface Particle {
   distance: number
   size: number
   color: string
+  image?: string
+  spin?: number
 }
 
 const snowflakes = ref<Snowflake[]>([])
@@ -98,28 +101,42 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
     snowflakes.value.splice(index, 1)
   }
 
-  // Create particles
-  const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#00d2d3']
-  const particleCount = 45 + Math.floor(Math.random() * 55) // 45-100 particles
-
-  for (let i = 0; i < particleCount; i++) {
-    const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5
-    const particle: Particle = {
-      id: nextId++,
-      x,
-      y,
-      angle,
-      distance: 80 + Math.random() * 60, // 80-140px distance
-      size: 4 + Math.random() * 6, // 4-10px
-      color: colors[Math.floor(Math.random() * colors.length)]!,
+  if (snowflake.emoji === '🧅') {
+    const sliceCount = 8 + Math.floor(Math.random() * 6) // 8-13 slices
+    for (let i = 0; i < sliceCount; i++) {
+      const angle = (Math.PI * 2 * i) / sliceCount + (Math.random() - 0.5) * 0.3
+      particles.value.push({
+        id: nextId++,
+        x, y, angle,
+        distance: 100 + Math.random() * 80,
+        size: 20 + Math.random() * 16, // 20-36px
+        color: '',
+        image: onionSlice,
+        spin: (Math.random() - 0.5) * 720,
+      })
     }
-    particles.value.push(particle)
+    setTimeout(() => {
+      const cutoff = nextId - sliceCount
+      particles.value = particles.value.filter((p) => p.id >= cutoff || p.image !== onionSlice)
+    }, 1000)
+  } else {
+    const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#00d2d3']
+    const particleCount = 45 + Math.floor(Math.random() * 55) // 45-100 particles
+    for (let i = 0; i < particleCount; i++) {
+      const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5
+      particles.value.push({
+        id: nextId++,
+        x, y, angle,
+        distance: 80 + Math.random() * 60,
+        size: 4 + Math.random() * 6,
+        color: colors[Math.floor(Math.random() * colors.length)]!,
+      })
+    }
+    setTimeout(() => {
+      const cutoff = nextId - particleCount
+      particles.value = particles.value.filter((p) => p.id >= cutoff)
+    }, 800)
   }
-
-  // Remove particles after animation
-  setTimeout(() => {
-    particles.value = particles.value.filter((p) => p.id < nextId - particleCount)
-  }, 800)
 }
 </script>
 
@@ -140,20 +157,35 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
     >
       <span class="emoji" :class="{ flipping: snowflake.flipping }">{{ snowflake.emoji }}</span>
     </div>
-    <div
-      v-for="particle in particles"
-      :key="particle.id"
-      class="particle"
-      :style="{
-        left: `${particle.x}px`,
-        top: `${particle.y}px`,
-        width: `${particle.size}px`,
-        height: `${particle.size}px`,
-        backgroundColor: particle.color,
-        '--angle': `${particle.angle}rad`,
-        '--distance': `${particle.distance}px`,
-      }"
-    />
+    <template v-for="particle in particles" :key="particle.id">
+      <img
+        v-if="particle.image"
+        class="particle particle-image"
+        :src="particle.image"
+        :style="{
+          left: `${particle.x}px`,
+          top: `${particle.y}px`,
+          width: `${particle.size}px`,
+          height: `${particle.size}px`,
+          '--angle': `${particle.angle}rad`,
+          '--distance': `${particle.distance}px`,
+          '--spin': `${particle.spin ?? 0}deg`,
+        }"
+      />
+      <div
+        v-else
+        class="particle"
+        :style="{
+          left: `${particle.x}px`,
+          top: `${particle.y}px`,
+          width: `${particle.size}px`,
+          height: `${particle.size}px`,
+          backgroundColor: particle.color,
+          '--angle': `${particle.angle}rad`,
+          '--distance': `${particle.distance}px`,
+        }"
+      />
+    </template>
   </div>
 </template>
 
@@ -203,6 +235,27 @@ const explodePizza = (event: MouseEvent, snowflake: Snowflake) => {
   border-radius: 50%;
   pointer-events: none;
   animation: burst 0.8s ease-out forwards;
+}
+
+.particle-image {
+  border-radius: 0;
+  background: none;
+  animation: burst-image 1s ease-out forwards;
+}
+
+@keyframes burst-image {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(
+        calc(cos(var(--angle)) * var(--distance)),
+        calc(sin(var(--angle)) * var(--distance))
+      )
+      scale(0.4) rotate(var(--spin));
+    opacity: 0;
+  }
 }
 
 @keyframes fall {

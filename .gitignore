@@ -16,13 +16,12 @@ coverage
 
 # Editor directories and files
 .vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
 !.vscode/extensions.json
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+!.vscode/*.code-snippets
+!*.code-workspace
 
 *.tsbuildinfo
 
