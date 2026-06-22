@@ -35,25 +35,47 @@ watch(
       <div class="recipe-controls">
         <div class="control-group">
           <label for="pizza-size">Pizza Größe (cm)</label>
-          <input
-            id="pizza-size"
-            type="number"
-            v-model.number="pizzaSize"
-            min="15"
-            max="50"
-            step="1"
-          />
+          <div class="slider-row">
+            <input
+              id="pizza-size"
+              type="range"
+              v-model.number="pizzaSize"
+              min="15"
+              max="50"
+              step="1"
+              class="slider"
+            />
+            <input
+              type="number"
+              v-model.number="pizzaSize"
+              min="15"
+              max="50"
+              step="1"
+              class="number-input"
+            />
+          </div>
         </div>
         <div class="control-group">
           <label for="pizza-count">Anzahl Pizzen</label>
-          <input
-            id="pizza-count"
-            type="number"
-            v-model.number="pizzaCount"
-            min="1"
-            max="20"
-            step="1"
-          />
+          <div class="slider-row">
+            <input
+              id="pizza-count"
+              type="range"
+              v-model.number="pizzaCount"
+              min="1"
+              max="50"
+              step="1"
+              class="slider"
+            />
+            <input
+              type="number"
+              v-model.number="pizzaCount"
+              min="1"
+              max="50"
+              step="1"
+              class="number-input"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -157,9 +179,9 @@ h1 {
 
 .recipe-controls {
   display: flex;
-  gap: 2rem;
+  flex-direction: column;
+  gap: 1rem;
   margin-top: 2rem;
-  flex-wrap: wrap;
 }
 
 .control-group {
@@ -174,16 +196,39 @@ h1 {
   font-size: 0.9rem;
 }
 
-.control-group input {
-  padding: 0.5rem;
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.slider {
+  flex: 1;
+  min-width: 120px;
+  accent-color: #d97706;
+  cursor: pointer;
+  height: 4px;
+}
+
+.number-input {
+  padding: 0.4rem 0.5rem;
   border: 2px solid #e5e7eb;
   border-radius: 0.375rem;
   font-size: 1rem;
-  width: 150px;
+  width: 64px;
+  text-align: center;
   transition: border-color 0.2s;
+  /* hide spinner arrows */
+  appearance: textfield;
 }
 
-.control-group input:focus {
+.number-input::-webkit-outer-spin-button,
+.number-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.number-input:focus {
   outline: none;
   border-color: #d97706;
 }
