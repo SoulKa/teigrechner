@@ -1,23 +1,21 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect } from 'vue'
+import { computed, watchEffect } from 'vue'
 import RecipeDisplay from './components/RecipeDisplay.vue'
 import PizzaSnow from './components/PizzaSnow.vue'
 import { Recipe } from './data/recipes'
-import { usePathRecipe } from '@/composables/useUrlState'
+import { usePathRecipe, useQueryParam } from '@/composables/useUrlState'
 
 const recipes = [Recipe.NEW_HAVEN, Recipe.NEAPOLITAN, Recipe.FLAMMKUCHEN] as const
 const selectedRecipe = usePathRecipe(recipes)
 
-const snowEnabled = ref(true)
+const snowEnabled = useQueryParam('snow', true)
 const snowEmoji = computed(() => selectedRecipe.value === Recipe.FLAMMKUCHEN ? '🧅' : '🍕')
 
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
-const stored = localStorage.getItem('theme')
-const darkMode = ref(stored ? stored === 'dark' : prefersDark.matches)
+const darkMode = useQueryParam('theme', prefersDark.matches ? 'dark' : 'light')
 
 watchEffect(() => {
-  document.documentElement.setAttribute('data-theme', darkMode.value ? 'dark' : 'light')
-  localStorage.setItem('theme', darkMode.value ? 'dark' : 'light')
+  document.documentElement.setAttribute('data-theme', darkMode.value === 'dark' ? 'dark' : 'light')
 })
 </script>
 
@@ -33,10 +31,10 @@ watchEffect(() => {
       <div class="brand">Teigrechner</div>
       <div class="topbar-actions">
         <button
-          class="theme-toggle"
-          :title="darkMode ? 'Hellmodus aktivieren' : 'Dunkelmodus aktivieren'"
-          @click="darkMode = !darkMode"
-        >{{ darkMode ? '💡' : '🌕' }}</button>
+           class="theme-toggle"
+           :title="darkMode === 'dark' ? 'Hellmodus aktivieren' : 'Dunkelmodus aktivieren'"
+           @click="darkMode = darkMode === 'dark' ? 'light' : 'dark'"
+         >{{ darkMode === 'dark' ? '☀️' : '🌚' }}</button>
         <button
           class="snow-toggle"
           :class="{ active: snowEnabled }"
