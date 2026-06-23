@@ -1,15 +1,22 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, watchEffect } from 'vue'
 import RecipeDisplay from './components/RecipeDisplay.vue'
 import PizzaSnow from './components/PizzaSnow.vue'
 import { Recipe } from './data/recipes'
-import { usePathRecipe } from '@/composables/useUrlState'
+import { usePathRecipe, useQueryParam } from '@/composables/useUrlState'
 
 const recipes = [Recipe.NEW_HAVEN, Recipe.NEAPOLITAN, Recipe.FLAMMKUCHEN] as const
 const selectedRecipe = usePathRecipe(recipes)
 
-const snowEnabled = ref(true)
+const snowEnabled = useQueryParam('snow', true)
 const snowEmoji = computed(() => selectedRecipe.value === Recipe.FLAMMKUCHEN ? '🧅' : '🍕')
+
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
+const darkMode = useQueryParam('theme', prefersDark.matches ? 'dark' : 'light')
+
+watchEffect(() => {
+  document.documentElement.setAttribute('data-theme', darkMode.value === 'dark' ? 'dark' : 'light')
+})
 </script>
 
 <template>
@@ -23,6 +30,11 @@ const snowEmoji = computed(() => selectedRecipe.value === Recipe.FLAMMKUCHEN ? '
     <header class="topbar">
       <div class="brand">Teigrechner</div>
       <div class="topbar-actions">
+        <button
+           class="theme-toggle"
+           :title="darkMode === 'dark' ? 'Hellmodus aktivieren' : 'Dunkelmodus aktivieren'"
+           @click="darkMode = darkMode === 'dark' ? 'light' : 'dark'"
+         >{{ darkMode === 'dark' ? '☀️' : '🌚' }}</button>
         <button
           class="snow-toggle"
           :class="{ active: snowEnabled }"
@@ -47,6 +59,35 @@ const snowEmoji = computed(() => selectedRecipe.value === Recipe.FLAMMKUCHEN ? '
 </template>
 
 <style>
+:root,
+[data-theme="light"] {
+  --color-bg: #f8fafc;
+  --color-text: #0f172a;
+  --color-border: #e2e8f0;
+  --color-accent: #d97706;
+  --color-muted: #6b7280;
+  --color-label: #4b5563;
+  --color-heading: #1f2937;
+  --color-body-text: #374151;
+  --color-divider: #f3f4f6;
+  --color-input-border: #e5e7eb;
+  --color-input-bg: #ffffff;
+}
+
+[data-theme="dark"] {
+  --color-bg: #0f172a;
+  --color-text: #f1f5f9;
+  --color-border: #334155;
+  --color-accent: #f59e0b;
+  --color-muted: #94a3b8;
+  --color-label: #cbd5e1;
+  --color-heading: #f1f5f9;
+  --color-body-text: #cbd5e1;
+  --color-divider: #1e293b;
+  --color-input-border: #334155;
+  --color-input-bg: #1e293b;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -54,12 +95,14 @@ const snowEmoji = computed(() => selectedRecipe.value === Recipe.FLAMMKUCHEN ? '
 }
 
 body {
-  background: #f8fafc;
+  background: var(--color-bg);
+  transition: background 0.2s, color 0.2s;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 #app {
   min-height: 100vh;
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 .topbar {
@@ -83,19 +126,27 @@ body {
   gap: 1rem;
 }
 
-.snow-toggle {
+.snow-toggle,
+.theme-toggle {
   background: none;
   border: none;
   cursor: pointer;
   font-size: 1.1rem;
   padding: 0.25rem;
   border-radius: 0.25rem;
-  opacity: 0.35;
   transition: opacity 0.2s;
   line-height: 1;
 }
 
+.snow-toggle {
+  opacity: 0.35;
+}
+
 .snow-toggle.active {
+  opacity: 1;
+}
+
+.theme-toggle {
   opacity: 1;
 }
 

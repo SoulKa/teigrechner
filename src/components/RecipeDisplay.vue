@@ -135,24 +135,25 @@ watch(
   margin: 0 auto;
   padding: 2rem;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  transition: color 0.2s;
 }
 
 .recipe-header {
   margin-bottom: 3rem;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 2px solid var(--color-input-border);
   padding-bottom: 2rem;
 }
 
 h1 {
   margin: 0 0 0.5rem 0;
   font-size: 2.5rem;
-  color: #1f2937;
+  color: var(--color-heading);
 }
 
 .description {
   margin: 0.5rem 0 1.5rem 0;
   font-size: 1.1rem;
-  color: #6b7280;
+  color: var(--color-muted);
 }
 
 .recipe-controls {
@@ -170,22 +171,24 @@ h1 {
 
 .control-group label {
   font-weight: 600;
-  color: #4b5563;
+  color: var(--color-label);
   font-size: 0.9rem;
 }
 
 .control-group input {
   padding: 0.5rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--color-input-border);
   border-radius: 0.375rem;
   font-size: 1rem;
   width: 150px;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  background: var(--color-input-bg);
+  color: var(--color-text);
 }
 
 .control-group input:focus {
   outline: none;
-  border-color: #d97706;
+  border-color: var(--color-accent);
 }
 
 .recipe-meta {
@@ -202,11 +205,11 @@ h1 {
 
 .label {
   font-weight: 600;
-  color: #4b5563;
+  color: var(--color-label);
 }
 
 .value {
-  color: #6b7280;
+  color: var(--color-muted);
   font-size: 1rem;
 }
 
@@ -219,7 +222,7 @@ h1 {
 h2 {
   margin: 0 0 1.5rem 0;
   font-size: 1.5rem;
-  color: #1f2937;
+  color: var(--color-heading);
 }
 
 .ingredients-list {
@@ -232,7 +235,7 @@ h2 {
   display: flex;
   gap: 1rem;
   padding: 0.75rem 0;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--color-divider);
 }
 
 .ingredient-item:last-child {
@@ -247,24 +250,24 @@ h2 {
 
 .ingredient-amount {
   font-weight: 600;
-  color: #d97706;
+  color: var(--color-accent);
   min-width: 80px;
   flex-shrink: 0;
 }
 
 .ingredient-name {
-  color: #374151;
+  color: var(--color-body-text);
 }
 
 .ingredient-weight {
   margin-left: auto;
-  color: #6b7280;
+  color: var(--color-muted);
 }
 
 .instructions-list {
   margin: 0;
   padding-left: 1.5rem;
-  color: #374151;
+  color: var(--color-body-text);
 }
 
 .instruction-item {
@@ -280,7 +283,7 @@ h2 {
 .baking-section {
   margin-top: 3rem;
   padding-top: 2rem;
-  border-top: 2px solid #e5e7eb;
+  border-top: 2px solid var(--color-input-border);
 }
 
 .oven-toggle {
@@ -290,12 +293,12 @@ h2 {
 
 .oven-toggle button {
   padding: 0.4rem 0.875rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--color-input-border);
   border-radius: 0;
   background: none;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #4b5563;
+  color: var(--color-label);
   cursor: pointer;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
@@ -313,8 +316,8 @@ h2 {
 }
 
 .oven-toggle button.active {
-  background: #d97706;
-  border-color: #d97706;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
   color: #fff;
   z-index: 1;
 }
@@ -333,13 +336,13 @@ h2 {
 
 .baking-label {
   font-weight: 600;
-  color: #4b5563;
+  color: var(--color-label);
   min-width: 100px;
 }
 
 .baking-value {
   font-weight: 600;
-  color: #d97706;
+  color: var(--color-accent);
 }
 
 @media (max-width: 768px) {
