@@ -33,3 +33,6 @@ coverage
 
 # Vitest
 __screenshots__/
+
+# Cloudflare
+.wrangler
