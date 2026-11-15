@@ -10,7 +10,7 @@ function fromParam<T>(raw: string, defaultValue: T): T {
   return raw as T
 }
 
-const base = import.meta.env.BASE_URL // e.g. '/teigrechner/'
+const base = import.meta.env.BASE_URL // '/' unless Vite's base is configured
 
 export function usePathRecipe<T extends Recipe>(recipes: readonly T[]) {
   const fromPath = () => {
